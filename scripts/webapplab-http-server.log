@@ -1,0 +1,141 @@
+
+[2026-05-07 12:22:43] Iniciando TurboWings na porta 8080
+Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
+192.168.68.109 - - [07/May/2026 12:22:52] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:52] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 12:22:53] code 404, message File not found
+192.168.68.109 - - [07/May/2026 12:22:53] "GET /favicon.ico HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /?join=ebcd56a6-a360-4e29-8380-92d85e671e90 HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /manifest.webmanifest HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /themes.css HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /style.css HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /script.js HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /assets/background/cosmic_desktop_bg_app.png HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] code 404, message File not found
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /assets/background/cosmic_mobile_bg_home.png HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:02] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 12:25:11] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET / HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /css/themes.css HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /css/style.css HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /js/i18n.js HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /js/themes.js HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /js/gameplay.js HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 13:50:31] "GET /js/application.js HTTP/1.1" 304 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET / HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:13] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET / HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:18] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.121 - - [07/May/2026 13:52:19] code 404, message File not found
+192.168.68.121 - - [07/May/2026 13:52:19] "GET /favicon.ico HTTP/1.1" 404 -
+
+[2026-05-07 14:42:24] Iniciando TurboWings na porta 8080
+Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
+192.168.68.109 - - [07/May/2026 14:42:31] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:42:31] code 404, message File not found
+192.168.68.109 - - [07/May/2026 14:42:31] "GET /favicon.ico HTTP/1.1" 404 -
+192.168.68.109 - - [07/May/2026 14:42:34] code 404, message File not found
+192.168.68.109 - - [07/May/2026 14:42:34] "GET /favicon.ico HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET / HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 14:46:03] "GET /js/application.js HTTP/1.1" 200 -
+
+[2026-05-07 14:53:02] Iniciando TurboWings na porta 8080
+Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
+192.168.68.109 - - [07/May/2026 14:53:09] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 14:53:09] code 404, message File not found
+192.168.68.109 - - [07/May/2026 14:53:09] "GET /favicon.ico HTTP/1.1" 404 -
+
+[2026-05-07 15:08:58] Iniciando TurboWings na porta 8080
+Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
+192.168.68.109 - - [07/May/2026 15:09:08] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /css/themes.css HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:08] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:09:17] code 404, message File not found
+192.168.68.109 - - [07/May/2026 15:09:17] "GET /favicon.ico HTTP/1.1" 404 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET / HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /css/themes.css HTTP/1.1" 304 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.107 - - [07/May/2026 15:12:16] "GET /js/application.js HTTP/1.1" 200 -
+
+[2026-05-07 15:34:14] Iniciando TurboWings na porta 8080
+Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
+192.168.68.109 - - [07/May/2026 15:34:20] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /css/themes.css HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/progression.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/storage.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/themes.js HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/missions.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/audio.js HTTP/1.1" 304 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:34:20] "GET /js/achievements.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET / HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /css/style.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /css/themes.css HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/progression.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/storage.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/themes.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/i18n.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/missions.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/achievements.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/gameplay.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/audio.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /js/application.js HTTP/1.1" 200 -
+192.168.68.109 - - [07/May/2026 15:45:09] code 404, message File not found
+192.168.68.109 - - [07/May/2026 15:45:09] "GET /favicon.ico HTTP/1.1" 404 -

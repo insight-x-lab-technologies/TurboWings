@@ -1,0 +1,98 @@
+:root {
+  --color-primary: #ff6b35;
+  --color-secondary: #1f83ff;
+  --color-bg: #081225;
+  --color-text: #f7fbff;
+  --color-panel: rgba(10, 23, 46, 0.76);
+  --color-panel-strong: rgba(7, 16, 35, 0.92);
+  --color-surface-soft: rgba(255, 255, 255, 0.08);
+  --color-muted: rgba(238, 247, 255, 0.74);
+  --color-border: rgba(255, 255, 255, 0.14);
+  --color-success: #7ef09a;
+  --color-warning: #ffd166;
+  --color-button: linear-gradient(135deg, #ff8f5b 0%, #ff5d36 100%);
+  --color-button-hover: linear-gradient(135deg, #ff9f70 0%, #ff734f 100%);
+  --color-button-secondary: rgba(255, 255, 255, 0.12);
+  --color-button-secondary-hover: rgba(255, 255, 255, 0.2);
+  --sky-start: #7fd4ff;
+  --sky-mid: #8fdfff;
+  --sky-end: #fff0b8;
+  --sky-glow: rgba(255, 233, 151, 0.72);
+  --cloud-color: rgba(255, 255, 255, 0.85);
+  --city-back: #79a7d6;
+  --city-mid: #4d7dac;
+  --city-front: #2d5c87;
+  --window-color: rgba(255, 231, 159, 0.9);
+  --obstacle-main: #2d5c87;
+  --obstacle-top: #4f85b8;
+  --plane-body: #ff6b35;
+  --plane-wing: #f5fbff;
+  --plane-accent: #1d3557;
+  --shadow-color: rgba(4, 10, 19, 0.26);
+}
+
+body.theme-city-day {
+  --color-primary: #ff6b35;
+  --color-secondary: #1f83ff;
+  --color-bg: #0e1f39;
+  --color-text: #f7fbff;
+  --color-panel: rgba(14, 33, 59, 0.72);
+  --color-panel-strong: rgba(11, 25, 46, 0.88);
+  --color-surface-soft: rgba(255, 255, 255, 0.08);
+  --color-muted: rgba(246, 251, 255, 0.76);
+  --color-border: rgba(255, 255, 255, 0.16);
+  --color-success: #7ef09a;
+  --color-warning: #ffd166;
+  --color-button: linear-gradient(135deg, #ff985c 0%, #ff6436 100%);
+  --color-button-hover: linear-gradient(135deg, #ffad73 0%, #ff7a4e 100%);
+  --color-button-secondary: rgba(255, 255, 255, 0.14);
+  --color-button-secondary-hover: rgba(255, 255, 255, 0.22);
+  --sky-start: #6fcbff;
+  --sky-mid: #99e1ff;
+  --sky-end: #ffe3a8;
+  --sky-glow: rgba(255, 223, 122, 0.72);
+  --cloud-color: rgba(255, 255, 255, 0.9);
+  --city-back: #93bce4;
+  --city-mid: #5f8dba;
+  --city-front: #325f8a;
+  --window-color: rgba(255, 233, 167, 0.95);
+  --obstacle-main: #366796;
+  --obstacle-top: #5c90c1;
+  --plane-body: #ff6b35;
+  --plane-wing: #f6fbff;
+  --plane-accent: #17324e;
+  --shadow-color: rgba(12, 21, 38, 0.24);
+}
+
+body.theme-city-night {
+  --color-primary: #87f18f;
+  --color-secondary: #69b3ff;
+  --color-bg: #05101f;
+  --color-text: #f4f9ff;
+  --color-panel: rgba(6, 17, 34, 0.82);
+  --color-panel-strong: rgba(3, 10, 20, 0.92);
+  --color-surface-soft: rgba(255, 255, 255, 0.06);
+  --color-muted: rgba(225, 236, 250, 0.72);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-success: #87f18f;
+  --color-warning: #ffd166;
+  --color-button: linear-gradient(135deg, #8bffac 0%, #4ddc6d 100%);
+  --color-button-hover: linear-gradient(135deg, #9dffb9 0%, #65e883 100%);
+  --color-button-secondary: rgba(255, 255, 255, 0.1);
+  --color-button-secondary-hover: rgba(255, 255, 255, 0.18);
+  --sky-start: #061529;
+  --sky-mid: #102648;
+  --sky-end: #23446d;
+  --sky-glow: rgba(202, 227, 255, 0.18);
+  --cloud-color: rgba(223, 236, 255, 0.28);
+  --city-back: #1b3152;
+  --city-mid: #17304d;
+  --city-front: #11263d;
+  --window-color: rgba(255, 226, 126, 0.88);
+  --obstacle-main: #16304d;
+  --obstacle-top: #214365;
+  --plane-body: #87f18f;
+  --plane-wing: #e9f8ff;
+  --plane-accent: #79aaff;
+  --shadow-color: rgba(2, 8, 17, 0.5);
+}

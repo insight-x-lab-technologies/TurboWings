@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Turbo Wings is a one-touch arcade flying game through a bustling city skyline."
+    />
+    <title>Turbo Wings</title>
+    <link rel="stylesheet" href="./css/themes.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body class="theme-city-day">
+    <div class="app-shell">
+      <main class="screen screen-home active" id="homeScreen" data-screen="home">
+        <div class="scene scene-home" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-a"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-air-trail"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <div class="home-layout">
+          <section class="hero-card hero-card-home panel">
+            <span class="eyebrow" data-i18n="home.eyebrow"></span>
+            <h1 class="hero-title" data-i18n="app.title"></h1>
+            <p class="hero-subtitle" data-i18n="home.subtitle"></p>
+
+            <div class="hero-actions hero-actions-home">
+              <button
+                class="button button-primary"
+                id="openSetupButton"
+                type="button"
+                data-i18n="home.newGame"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openLeaderboardButton"
+                type="button"
+                data-i18n="home.leaderboards"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openAchievementsButton"
+                type="button"
+                data-i18n="home.achievements"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openSettingsButton"
+                type="button"
+                data-i18n="home.settings"
+              ></button>
+            </div>
+          </section>
+
+          <section class="dashboard-grid">
+            <article class="home-panel panel">
+              <div class="panel-heading">
+                <span class="mini-label" data-i18n="home.pilotProfile"></span>
+                <strong class="summary-value" id="homeProfileName">Player 1</strong>
+                <p class="helper-text" id="homeProfileMeta"></p>
+              </div>
+
+              <div class="hero-stats home-stats">
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="home.bestScore"></span>
+                  <strong class="stat-value" id="homeBestScoreValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="home.totalCoins"></span>
+                  <strong class="stat-value compact" id="homeTotalCoinsValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="home.highestFlightLevel"></span>
+                  <strong class="stat-value compact" id="homeHighestFlightValue">FL 1</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="home.totalRuns"></span>
+                  <strong class="stat-value compact" id="homeRunsValue">0</strong>
+                </article>
+              </div>
+
+              <div class="home-mini-stats">
+                <span class="mini-pill">
+                  <strong data-i18n="home.topPilot"></strong>
+                  <span id="homeTopPilotValue">--</span>
+                </span>
+                <span class="mini-pill">
+                  <strong data-i18n="home.unlockedLevels"></strong>
+                  <span id="homeUnlockedValue">3 / 5</span>
+                </span>
+                <span class="mini-pill">
+                  <strong data-i18n="home.controls"></strong>
+                  <span data-i18n="home.controlsValue"></span>
+                </span>
+              </div>
+            </article>
+
+            <article class="home-panel panel">
+              <div class="panel-heading">
+                <span class="mini-label" data-i18n="home.activeMissions"></span>
+                <h2 data-i18n="home.activeMissionsTitle"></h2>
+                <p class="helper-text" data-i18n="home.activeMissionsHint"></p>
+              </div>
+              <div class="mission-list" id="homeMissionsList"></div>
+            </article>
+
+            <article class="home-panel panel">
+              <div class="panel-heading panel-heading-actions">
+                <div>
+                  <span class="mini-label" data-i18n="home.recentAchievements"></span>
+                  <h2 data-i18n="home.recentAchievementsTitle"></h2>
+                  <p class="helper-text" data-i18n="home.recentAchievementsHint"></p>
+                </div>
+                <button
+                  class="button button-secondary button-compact"
+                  id="openAchievementsPanelButton"
+                  type="button"
+                  data-i18n="home.viewAllAchievements"
+                ></button>
+              </div>
+              <div class="achievement-mini-list" id="homeRecentAchievementsList"></div>
+            </article>
+          </section>
+        </div>
+      </main>
+
+      <section class="screen screen-panel" id="setupScreen" data-screen="setup" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-a"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="setup.eyebrow"></span>
+              <h2 data-i18n="setup.title"></h2>
+              <p data-i18n="setup.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromSetupButton"
+              type="button"
+              data-i18n="setup.back"
+            ></button>
+          </div>
+
+          <div class="content-grid setup-grid">
+            <div class="form-card">
+              <label class="control-field" for="playerNameInput">
+                <span data-i18n="setup.playerName"></span>
+                <input
+                  class="text-input"
+                  id="playerNameInput"
+                  name="playerName"
+                  maxlength="24"
+                  autocomplete="nickname"
+                />
+              </label>
+
+              <div class="section-subhead">
+                <strong data-i18n="setup.selectDifficulty"></strong>
+                <p class="helper-text" data-i18n="setup.difficultyHint"></p>
+              </div>
+
+              <div class="difficulty-grid" id="difficultyList"></div>
+            </div>
+
+            <aside class="summary-card panel">
+              <span class="mini-label" data-i18n="setup.lastLoadout"></span>
+              <strong class="summary-value" id="setupSummaryValue"></strong>
+              <p class="helper-text" id="setupStatusText"></p>
+              <button
+                class="button button-primary"
+                id="startFlightButton"
+                type="button"
+                data-i18n="setup.start"
+              ></button>
+            </aside>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen screen-panel" id="settingsScreen" data-screen="settings" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-a"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="settings.eyebrow"></span>
+              <h2 data-i18n="settings.title"></h2>
+              <p data-i18n="settings.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromSettingsButton"
+              type="button"
+              data-i18n="settings.back"
+            ></button>
+          </div>
+
+          <div class="content-grid settings-grid">
+            <div class="form-card">
+              <label class="control-field" for="languageSelect">
+                <span data-i18n="settings.language"></span>
+                <select id="languageSelect" class="select-input"></select>
+              </label>
+
+              <label class="control-field" for="themeSelect">
+                <span data-i18n="settings.theme"></span>
+                <select id="themeSelect" class="select-input"></select>
+              </label>
+
+              <div class="toggle-stack">
+                <label class="toggle-card" for="musicToggle">
+                  <div>
+                    <strong data-i18n="settings.music"></strong>
+                    <p class="helper-text" data-i18n="settings.musicHint"></p>
+                  </div>
+                  <input id="musicToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="sfxToggle">
+                  <div>
+                    <strong data-i18n="settings.sfx"></strong>
+                    <p class="helper-text" data-i18n="settings.sfxHint"></p>
+                  </div>
+                  <input id="sfxToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="gameplayAudioToggle">
+                  <div>
+                    <strong data-i18n="settings.gameplayAudio"></strong>
+                    <p class="helper-text" data-i18n="settings.gameplayAudioHint"></p>
+                  </div>
+                  <input id="gameplayAudioToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="obstaclesToggle">
+                  <div>
+                    <strong data-i18n="settings.obstacles"></strong>
+                    <p class="helper-text" data-i18n="settings.obstaclesHint"></p>
+                  </div>
+                  <input id="obstaclesToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="powerUpsToggle">
+                  <div>
+                    <strong data-i18n="settings.powerUps"></strong>
+                    <p class="helper-text" data-i18n="settings.powerUpsHint"></p>
+                  </div>
+                  <input id="powerUpsToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="coinsToggle">
+                  <div>
+                    <strong data-i18n="settings.coins"></strong>
+                    <p class="helper-text" data-i18n="settings.coinsHint"></p>
+                  </div>
+                  <input id="coinsToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+
+                <label class="toggle-card" for="effectsToggle">
+                  <div>
+                    <strong data-i18n="settings.effects"></strong>
+                    <p class="helper-text" data-i18n="settings.effectsHint"></p>
+                  </div>
+                  <input id="effectsToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="section-subhead">
+                <strong data-i18n="settings.advancedTitle"></strong>
+                <p class="helper-text" data-i18n="settings.advancedHint"></p>
+              </div>
+              <button
+                class="button button-secondary"
+                id="openAdvancedSettingsButton"
+                type="button"
+                data-i18n="settings.openAdvanced"
+              ></button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section
+        class="screen screen-panel"
+        id="advancedSettingsScreen"
+        data-screen="advanced-settings"
+        hidden
+      >
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-a"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="settings.advancedEyebrow"></span>
+              <h2 data-i18n="settings.advancedTitle"></h2>
+              <p data-i18n="settings.tuningHint"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromAdvancedSettingsButton"
+              type="button"
+              data-i18n="settings.back"
+            ></button>
+          </div>
+
+          <div class="content-grid">
+            <div class="form-card">
+              <div class="tuning-list" id="difficultySettingsList"></div>
+            </div>
+
+            <div class="button-row">
+              <button
+                class="button button-secondary"
+                id="resetDifficultySettingsButton"
+                type="button"
+                data-i18n="settings.restoreDefaults"
+              ></button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section
+        class="screen screen-panel"
+        id="achievementsScreen"
+        data-screen="achievements"
+        hidden
+      >
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="achievements.eyebrow"></span>
+              <h2 data-i18n="achievements.title"></h2>
+              <p data-i18n="achievements.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromAchievementsButton"
+              type="button"
+              data-i18n="achievements.back"
+            ></button>
+          </div>
+
+          <div class="achievement-screen-summary">
+            <article class="stat-card">
+              <span class="stat-label" data-i18n="achievements.unlockedCount"></span>
+              <strong class="stat-value compact" id="achievementsUnlockedValue">0 / 10</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label" data-i18n="achievements.totalRewardedCoins"></span>
+              <strong class="stat-value compact" id="achievementsRewardedCoinsValue">0</strong>
+            </article>
+          </div>
+
+          <div class="achievement-list" id="achievementsList"></div>
+        </section>
+      </section>
+
+      <section class="screen screen-panel" id="leaderboardScreen" data-screen="leaderboard" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="leaderboard.eyebrow"></span>
+              <h2 data-i18n="leaderboard.title"></h2>
+              <p data-i18n="leaderboard.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromLeaderboardButton"
+              type="button"
+              data-i18n="leaderboard.back"
+            ></button>
+          </div>
+
+          <div class="leaderboard-card">
+            <div class="leaderboard-head">
+              <span data-i18n="leaderboard.rank"></span>
+              <span data-i18n="leaderboard.player"></span>
+              <span data-i18n="leaderboard.score"></span>
+              <span data-i18n="leaderboard.difficulty"></span>
+              <span data-i18n="leaderboard.date"></span>
+            </div>
+            <div class="leaderboard-list" id="leaderboardList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen screen-game" id="gameScreen" data-screen="game" hidden>
+        <canvas id="gameCanvas" aria-label="Turbo Wings game canvas"></canvas>
+
+        <div class="game-hud">
+          <div class="hud-group">
+            <div class="hud-grid">
+              <div class="hud-pill">
+                <span class="hud-label" data-i18n="game.score"></span>
+                <strong class="hud-value" id="scoreValue">0</strong>
+              </div>
+              <div class="hud-pill">
+                <span class="hud-label" data-i18n="game.coins"></span>
+                <strong class="hud-value" id="coinsValue">0</strong>
+              </div>
+              <div class="hud-pill">
+                <span class="hud-label" data-i18n="game.flightLevel"></span>
+                <strong class="hud-value" id="flightLevelValue">FL 1</strong>
+              </div>
+            </div>
+            <div class="hud-pill hud-pill-wide">
+              <span class="hud-label" data-i18n="game.run"></span>
+              <strong class="hud-value hud-value-compact" id="runMetaValue">Player 1 - Normal</strong>
+            </div>
+            <div class="hud-effects" id="activeEffectsList"></div>
+          </div>
+
+          <div class="hud-actions">
+            <button
+              class="icon-button"
+              id="pauseButton"
+              type="button"
+              data-i18n="game.pause"
+            ></button>
+            <button
+              class="icon-button"
+              id="leaveGameButton"
+              type="button"
+              data-i18n="game.home"
+            ></button>
+          </div>
+        </div>
+
+        <div class="overlay-stack">
+          <div class="overlay-card" id="startOverlay">
+            <span class="eyebrow" data-i18n="game.readyEyebrow"></span>
+            <h2 data-i18n="game.tapToFly"></h2>
+            <p data-i18n="game.instructions"></p>
+          </div>
+
+          <div class="overlay-card hidden" id="pauseOverlay">
+            <span class="eyebrow" data-i18n="game.pauseEyebrow"></span>
+            <h2 data-i18n="game.paused"></h2>
+            <p data-i18n="game.pauseHint"></p>
+            <div class="button-row">
+              <button
+                class="button button-primary"
+                id="resumeButton"
+                type="button"
+                data-i18n="game.resume"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="pauseHomeButton"
+                type="button"
+                data-i18n="game.home"
+              ></button>
+            </div>
+          </div>
+
+          <div class="overlay-card hidden overlay-card-game-over" id="gameOverOverlay">
+            <span class="eyebrow" data-i18n="game.gameOverEyebrow"></span>
+            <h2 data-i18n="game.gameOver"></h2>
+            <p class="overlay-note" id="gameOverMeta"></p>
+            <p class="overlay-note overlay-note-accent hidden" id="unlockNotice"></p>
+
+            <div class="game-over-stats">
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.finalScore"></span>
+                <strong class="stat-value" id="finalScoreValue">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.bestScore"></span>
+                <strong class="stat-value" id="bestScoreValue">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.collectedCoins"></span>
+                <strong class="stat-value" id="finalCoinsValue">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.totalCoins"></span>
+                <strong class="stat-value compact" id="gameOverTotalCoinsValue">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.timeSurvived"></span>
+                <strong class="stat-value compact" id="gameOverTimeValue">0s</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.flightLevelReached"></span>
+                <strong class="stat-value compact" id="gameOverFlightLevelValue">FL 1</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.powerUpsCollected"></span>
+                <strong class="stat-value compact" id="gameOverPowerUpsValue">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label" data-i18n="game.obstaclesPassed"></span>
+                <strong class="stat-value compact" id="gameOverObstaclesValue">0</strong>
+              </article>
+            </div>
+
+            <div class="game-over-columns">
+              <div class="summary-block">
+                <strong data-i18n="game.missionsCompleted"></strong>
+                <div class="summary-list" id="gameOverMissionsList"></div>
+              </div>
+              <div class="summary-block">
+                <strong data-i18n="game.achievementsUnlocked"></strong>
+                <div class="summary-list" id="gameOverAchievementsList"></div>
+              </div>
+            </div>
+
+            <div class="hero-actions">
+              <button
+                class="button button-primary"
+                id="restartButton"
+                type="button"
+                data-i18n="game.playAgain"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="changeSetupButton"
+                type="button"
+                data-i18n="game.changeSetup"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="gameOverHomeButton"
+                type="button"
+                data-i18n="game.home"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="notification-stack" id="notificationStack" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="./js/i18n.js" defer></script>
+    <script src="./js/themes.js" defer></script>
+    <script src="./js/storage.js" defer></script>
+    <script src="./js/progression.js" defer></script>
+    <script src="./js/missions.js" defer></script>
+    <script src="./js/achievements.js" defer></script>
+    <script src="./js/gameplay.js" defer></script>
+    <script src="./js/audio.js" defer></script>
+    <script src="./js/application.js" defer></script>
+    <script defer>
+      window.addEventListener("DOMContentLoaded", () => {
+        window.TurboWingsApplication?.boot();
+      });
+    </script>
+  </body>
+</html>

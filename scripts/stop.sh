@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_NAME="TurboWings"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+APP_NAME="$(basename "${PROJECT_DIR}")"
 PID_FILE="${SCRIPT_DIR}/.webapplab-http-server.pid"
 URL_FILE="${SCRIPT_DIR}/.webapplab-http-server.urls"
 LOG_FILE="${SCRIPT_DIR}/webapplab-http-server.log"
