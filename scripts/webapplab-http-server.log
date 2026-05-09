@@ -1575,3 +1575,91 @@ Diretório servido: /mnt/userdata/Projetos/Pessoal/TurboWings/src
 100.76.11.120 - - [09/May/2026 14:42:08] code 404, message File not found
 100.76.11.120 - - [09/May/2026 14:42:08] "GET /favicon.ico HTTP/1.1" 404 -
 100.76.11.120 - - [09/May/2026 14:42:08] "GET /assets/images/v1_default_game_icon_level_5.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:45:03] "GET /assets/images/v1_default_game_icon_resume.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /js/i18n.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /js/themes.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /js/application.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:49:38] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:49:44] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:49:44] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:50:00] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:50:00] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:50:28] "GET /assets/images/v1_default_game_icon_pause.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:50:28] "GET /assets/images/v1_default_game_icon_home.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:50:28] "GET /assets/songs/v1_default_gameplay.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:50:35] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:50:35] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:50:35] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:51:23] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:51:23] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:51:27] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:51:27] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:51:27] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:51:27] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:51:27] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:51:27] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:51:59] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:51:59] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:51:59] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:51:59] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:52:01] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:52:01] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:52:27] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:52:27] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:52:30] "GET /assets/songs/v1_default_gameplay.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:55:57] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:55:57] "GET /js/i18n.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:55:57] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:55:57] "GET /js/application.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:55:57] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:55:59] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:55:59] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:56:32] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:57:13] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:57:13] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET /js/i18n.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET /js/themes.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:05:24] "GET /js/application.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:05:25] "GET /assets/images/v1_default_game_icon_points.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:05:25] "GET /assets/images/v1_default_game_icon_settings.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:05:25] "GET /assets/images/v1_default_game_icon_trophy.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:07:09] "GET /assets/images/v1_default_game_icon_pause.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:07:09] "GET /assets/images/v1_default_game_icon_home.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:09:10] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:09:10] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:09:10] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:09:10] "GET /assets/images/v1_default_game_icon_pilot.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:09:10] "GET /assets/images/v1_default_game_icon_trophy.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:09:43] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:09:51] "GET / HTTP/1.1" 200 -
+
+[2026-05-09 15:10:31] Iniciando TurboWings na porta 8080
+Diretório servido: /mnt/userdata/Projetos/Pessoal/TurboWings/src
+100.76.11.120 - - [09/May/2026 15:10:35] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:10:35] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:12:14] "GET /assets/images/v1_default_game_icon_home.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:12:14] "GET /assets/images/v1_default_game_icon_pause.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET /js/i18n.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET /js/application.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:15:24] "GET /assets/images/v1_default_game_icon_trophy.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /css/style.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /assets/images/v1_default_gameplay_jet.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /assets/images/v1_default_HomeJet.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /assets/images/v1_default_logo.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /assets/images/v1_default_game_icon_pilot.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:18:31] "GET /assets/images/v1_default_game_icon_trophy.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:18:37] "GET /assets/images/v1_default_game_icon_home.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:18:37] "GET /assets/images/v1_default_game_icon_pause.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 15:19:16] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:19:16] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 15:19:16] "GET /js/themes.js HTTP/1.1" 304 -
