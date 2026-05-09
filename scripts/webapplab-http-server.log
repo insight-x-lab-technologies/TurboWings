@@ -3191,3 +3191,9 @@ Diretório servido: /home/administrator/Projetos/Pessoal/TurboWings/src
 100.68.120.124 - - [09/May/2026 20:10:23] "GET /assets/images/v1_default_game_icon_level_4.png HTTP/1.1" 200 -
 100.68.120.124 - - [09/May/2026 20:10:23] "GET /assets/images/v1_default_game_icon_level_5.png HTTP/1.1" 200 -
 100.68.120.124 - - [09/May/2026 20:10:23] "GET /assets/images/v1_default_game_icon_level_1.png HTTP/1.1" 200 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET / HTTP/1.1" 304 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET /js/i18n.js HTTP/1.1" 304 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET /css/style.css HTTP/1.1" 304 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET /manifest.webmanifest HTTP/1.1" 304 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET /js/application.js HTTP/1.1" 304 -
+100.95.181.108 - - [09/May/2026 20:12:11] "GET /favicon.png HTTP/1.1" 304 -
