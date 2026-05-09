@@ -31,6 +31,10 @@ window.TurboWingsApplication = (() => {
   };
 
   const FEATURED_ACHIEVEMENT_IDS = ["first-flight", "urban-pilot", "sky-ace", "sky-master"];
+  const DONATION_URLS = {
+    kofi: "https://ko-fi.com/insightxlabgamestudio",
+    coffee: "https://buymeacoffee.com/insight.x.lab.game.studio"
+  };
   const ACHIEVEMENT_CATEGORIES = [
     {
       id: "all",
@@ -78,6 +82,7 @@ window.TurboWingsApplication = (() => {
         screen: "home",
         settings: this.cloneDefaultSettings(),
         leaderboard: [],
+        selectedAchievementCategory: "all",
         unlocks: {
           turbo: false,
           legend: false
@@ -162,6 +167,8 @@ window.TurboWingsApplication = (() => {
         homeUnlockedValue: document.getElementById("homeUnlockedValue"),
         homeMissionsList: document.getElementById("homeMissionsList"),
         homeRecentAchievementsList: document.getElementById("homeRecentAchievementsList"),
+        homeShareFooter: document.getElementById("homeShareFooter"),
+        installDeviceButton: document.getElementById("installDeviceButton"),
         displayModeSelect: document.getElementById("displayModeSelect"),
         collisionDebugSelect: document.getElementById("collisionDebugSelect"),
         achievementsList: document.getElementById("achievementsList"),
@@ -191,6 +198,10 @@ window.TurboWingsApplication = (() => {
         gameOverMissionsList: document.getElementById("gameOverMissionsList"),
         gameOverAchievementsList: document.getElementById("gameOverAchievementsList"),
         gameOverMeta: document.getElementById("gameOverMeta"),
+        backFromDonateButton: document.getElementById("backFromDonateButton"),
+        backFromCreditsButton: document.getElementById("backFromCreditsButton"),
+        donationKoFiButton: document.getElementById("donationKoFiButton"),
+        donationCoffeeButton: document.getElementById("donationCoffeeButton"),
         unlockNotice: document.getElementById("unlockNotice"),
         activeEffectsList: document.getElementById("activeEffectsList"),
         startOverlay: document.getElementById("startOverlay"),
@@ -208,6 +219,7 @@ window.TurboWingsApplication = (() => {
         this.elements.resetDifficultySettingsButton,
         this.elements.settingsResetDifficultySettingsButton
       ].filter(Boolean);
+      this.deferredInstallPrompt = null;
     }
 
     cloneDefaultSettings() {
@@ -264,6 +276,7 @@ window.TurboWingsApplication = (() => {
       });
 
       this.bindEvents();
+      this.bindInstallPromptEvents();
       this.restoreDisplayMode();
       this.restoreCollisionDebug();
       subscribe(() => {
@@ -460,6 +473,28 @@ window.TurboWingsApplication = (() => {
         this.showScreen("achievements");
       });
 
+      this.elements.installDeviceButton?.addEventListener("click", async () => {
+        this.handleInteraction({ playNavigation: false });
+        await this.promptInstall();
+      });
+
+      this.elements.homeShareFooter?.addEventListener("click", async (event) => {
+        const shareButton = event.target.closest("[data-share-target]");
+        if (shareButton) {
+          this.handleInteraction({ playNavigation: false });
+          await this.handleShareAction(shareButton.dataset.shareTarget);
+          return;
+        }
+
+        const screenButton = event.target.closest("[data-open-screen]");
+        if (!screenButton) {
+          return;
+        }
+
+        this.handleInteraction();
+        this.showScreen(screenButton.dataset.openScreen);
+      });
+
       this.elements.backFromSetupButton.addEventListener("click", () => {
         this.handleInteraction();
         this.showScreen("home");
@@ -485,6 +520,16 @@ window.TurboWingsApplication = (() => {
         this.showScreen("home");
       });
 
+      this.elements.backFromDonateButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.showScreen("home");
+      });
+
+      this.elements.backFromCreditsButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.showScreen("home");
+      });
+
       this.elements.leaderboardToSetupButton?.addEventListener("click", () => {
         this.handleInteraction();
         this.showScreen("setup");
@@ -498,6 +543,16 @@ window.TurboWingsApplication = (() => {
       this.elements.leaderboardToSettingsButton?.addEventListener("click", () => {
         this.handleInteraction();
         this.showScreen("settings");
+      });
+
+      this.elements.donationKoFiButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.openExternalUrl(DONATION_URLS.kofi);
+      });
+
+      this.elements.donationCoffeeButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.openExternalUrl(DONATION_URLS.coffee);
       });
 
       this.elements.startFlightButton.addEventListener("click", () => {
@@ -555,8 +610,16 @@ window.TurboWingsApplication = (() => {
         this.refreshUi();
       });
 
-      this.elements.displayModeSelect.addEventListener("change", (event) => {
+      this.elements.displayModeSelect?.addEventListener("change", (event) => {
         this.applyDisplayMode(event.target.value);
+      });
+
+      window.addEventListener("resize", () => {
+        this.syncAutoDisplayMode();
+      });
+
+      window.visualViewport?.addEventListener("resize", () => {
+        this.syncAutoDisplayMode();
       });
 
       this.elements.collisionDebugSelect?.addEventListener("change", (event) => {
@@ -670,6 +733,53 @@ window.TurboWingsApplication = (() => {
         this.handleInteraction({ playNavigation: false });
         this.claimMissionReward(button.dataset.claimMission);
       });
+
+      this.elements.achievementsCategoryList?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-achievement-category]");
+        if (!button) {
+          return;
+        }
+
+        const categoryId = button.dataset.achievementCategory;
+        if (
+          !ACHIEVEMENT_CATEGORIES.some((category) => category.id === categoryId) ||
+          this.state.selectedAchievementCategory === categoryId
+        ) {
+          return;
+        }
+
+        this.handleInteraction({ playNavigation: false });
+        this.state.selectedAchievementCategory = categoryId;
+        this.renderAchievementsScreen();
+      });
+    }
+
+    bindInstallPromptEvents() {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      const handleInstallabilityChange = () => {
+        this.updateInstallButtonVisibility();
+      };
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        this.deferredInstallPrompt = event;
+        handleInstallabilityChange();
+      });
+
+      window.addEventListener("appinstalled", () => {
+        this.deferredInstallPrompt = null;
+        handleInstallabilityChange();
+      });
+
+      window.matchMedia?.("(display-mode: standalone)")?.addEventListener?.(
+        "change",
+        handleInstallabilityChange
+      );
+
+      handleInstallabilityChange();
     }
 
     handleInteraction({ playButton = true, playNavigation = false } = {}) {
@@ -694,15 +804,135 @@ window.TurboWingsApplication = (() => {
       });
     }
 
+    isInstalledPwa() {
+      return (
+        window.matchMedia?.("(display-mode: standalone)")?.matches ||
+        window.navigator.standalone === true
+      );
+    }
+
+    updateInstallButtonVisibility() {
+      if (!this.elements.installDeviceButton) {
+        return;
+      }
+
+      this.elements.installDeviceButton.hidden =
+        !this.deferredInstallPrompt || this.isInstalledPwa();
+    }
+
+    async promptInstall() {
+      if (!this.deferredInstallPrompt || this.isInstalledPwa()) {
+        this.updateInstallButtonVisibility();
+        return;
+      }
+
+      const promptEvent = this.deferredInstallPrompt;
+      try {
+        await promptEvent.prompt();
+        await promptEvent.userChoice?.catch(() => null);
+      } finally {
+        this.deferredInstallPrompt = null;
+        this.updateInstallButtonVisibility();
+      }
+    }
+
     restoreDisplayMode() {
-      const savedMode = window.localStorage.getItem("turboWingsDisplayMode") || "auto";
-      this.applyDisplayMode(savedMode);
+      this.applyDisplayMode("auto");
+    }
+
+    getViewportMetrics() {
+      const visualViewport = window.visualViewport;
+      const viewportWidth = Math.round(
+        visualViewport?.width || window.innerWidth || document.documentElement.clientWidth || 0
+      );
+      const viewportHeight = Math.round(
+        visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0
+      );
+
+      return {
+        width: viewportWidth,
+        height: viewportHeight,
+        shortSide: Math.min(viewportWidth, viewportHeight),
+        longSide: Math.max(viewportWidth, viewportHeight)
+      };
+    }
+
+    detectAutoDisplayMode() {
+      const { width, height, shortSide, longSide } = this.getViewportMetrics();
+      const userAgent = navigator.userAgent || "";
+      const platform = navigator.platform || "";
+      const maxTouchPoints = Number(navigator.maxTouchPoints || 0);
+      const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
+      const hoverNone = window.matchMedia?.("(hover: none)")?.matches ?? false;
+      const canHover = window.matchMedia?.("(hover: hover)")?.matches ?? false;
+      const isTouchDevice = coarsePointer || hoverNone || maxTouchPoints > 0;
+      const isIpad =
+        /\biPad\b/i.test(userAgent) || (platform === "MacIntel" && maxTouchPoints > 1);
+      const isIphone = /\b(iPhone|iPod)\b/i.test(userAgent);
+      const isAndroid = /Android/i.test(userAgent);
+      const isTabletUa =
+        isIpad ||
+        /Tablet|PlayBook|Silk/i.test(userAgent) ||
+        (isAndroid && !/Mobile/i.test(userAgent));
+      const isPhoneUa = isIphone || (isAndroid && /Mobile/i.test(userAgent));
+      const isDesktopLike = canHover && !isTouchDevice;
+      const prefersDesktopLayout = canHover && width >= 960 && !isPhoneUa && !isTabletUa;
+
+      if (isPhoneUa) {
+        return "mobile";
+      }
+
+      if (isTabletUa) {
+        return "tablet";
+      }
+
+      if (prefersDesktopLayout) {
+        return "desktop";
+      }
+
+      if (isDesktopLike && shortSide >= 900) {
+        return "desktop";
+      }
+
+      if (shortSide <= 520 || width <= 760 || height <= 520) {
+        return "mobile";
+      }
+
+      if (isTouchDevice) {
+        if (shortSide >= 700 || longSide >= 920) {
+          return "tablet";
+        }
+        return "mobile";
+      }
+
+      if (width >= 1180 || shortSide >= 820) {
+        return "desktop";
+      }
+
+      return "tablet";
+    }
+
+    syncAutoDisplayMode() {
+      const activePreference =
+        this.elements.displayModeSelect?.value ||
+        document.body.dataset.displayModePreference ||
+        "auto";
+      if (activePreference !== "auto") {
+        return;
+      }
+
+      document.body.dataset.displayMode = this.detectAutoDisplayMode();
+      document.body.dataset.displayModePreference = "auto";
     }
 
     applyDisplayMode(mode) {
       const displayMode = ["auto", "tablet", "mobile", "desktop"].includes(mode) ? mode : "auto";
-      this.elements.displayModeSelect.value = displayMode;
-      document.body.dataset.displayMode = displayMode;
+      if (this.elements.displayModeSelect) {
+        this.elements.displayModeSelect.value = displayMode;
+      }
+      document.body.dataset.displayModePreference = displayMode;
+      document.body.dataset.displayMode =
+        displayMode === "auto" ? this.detectAutoDisplayMode() : displayMode;
       window.localStorage.setItem("turboWingsDisplayMode", displayMode);
     }
 
@@ -810,10 +1040,12 @@ window.TurboWingsApplication = (() => {
         .map((difficulty) => {
           const tuning = this.state.settings.tuning[difficulty.id];
           return `
-            <article class="tuning-card">
+            <article class="tuning-card" data-difficulty-id="${difficulty.id}">
               <div class="tuning-head">
-                <strong>${t(difficulty.labelKey)}</strong>
-                <span class="mini-label">Lv. ${difficulty.level}</span>
+                <div class="tuning-head-copy">
+                  <span class="difficulty-visual" aria-hidden="true"></span>
+                  <strong>${this.getDisplayDifficultyLabel(difficulty)}</strong>
+                </div>
               </div>
 
               <label class="range-row">
@@ -1054,11 +1286,39 @@ window.TurboWingsApplication = (() => {
 
       return `
         <article class="achievement-mini-card">
-          <strong>${t(achievement.titleKey)}</strong>
-          <p class="helper-text">${t(achievement.descriptionKey)}</p>
+          <strong>${this.getAchievementTitle(achievement)}</strong>
+          <p class="helper-text">${this.getAchievementDescription(achievement)}</p>
           <span class="achievement-mini-date">${this.formatDate(entry.unlockedAt)}</span>
         </article>
       `;
+    }
+
+    getAchievementText(achievement, field) {
+      const directValue = achievement?.[field];
+      if (directValue && typeof directValue === "object") {
+        return (
+          directValue[getLanguage()] ||
+          directValue["pt-BR"] ||
+          directValue["en-US"] ||
+          Object.values(directValue)[0] ||
+          ""
+        );
+      }
+
+      if (typeof directValue === "string" && directValue) {
+        return directValue;
+      }
+
+      const key = achievement?.[`${field}Key`];
+      return key ? t(key) : "";
+    }
+
+    getAchievementTitle(achievement) {
+      return this.getAchievementText(achievement, "title");
+    }
+
+    getAchievementDescription(achievement) {
+      return this.getAchievementText(achievement, "description");
     }
 
     getAchievementProgress(achievement, stats, unlocked) {
@@ -1107,8 +1367,8 @@ window.TurboWingsApplication = (() => {
             <span class="achievement-status-pill ${unlocked ? "is-unlocked" : ""}">${badgeText}</span>
           </div>
           <div class="achievement-card-copy">
-            <strong>${t(achievement.titleKey)}</strong>
-            <p class="helper-text">${t(achievement.descriptionKey)}</p>
+            <strong>${this.getAchievementTitle(achievement)}</strong>
+            <p class="helper-text">${this.getAchievementDescription(achievement)}</p>
           </div>
           <div class="achievement-reward-row">
             <strong>${rewardValue}</strong>
@@ -1144,6 +1404,11 @@ window.TurboWingsApplication = (() => {
       const profile = this.state.currentProfile || this.loadProfile(this.getDefaultPlayerName());
       const achievementState = profile.achievements || {};
       const stats = ensureStats(profile.stats);
+      const selectedCategoryId = ACHIEVEMENT_CATEGORIES.some(
+        (category) => category.id === this.state.selectedAchievementCategory
+      )
+        ? this.state.selectedAchievementCategory
+        : "all";
       const unlockedCount = this.achievementTemplates.filter(
         (achievement) => achievementState[achievement.id]?.unlocked
       ).length;
@@ -1155,11 +1420,13 @@ window.TurboWingsApplication = (() => {
         ? Math.round((unlockedCount / totalAchievements) * 100)
         : 0;
       const featuredSet = new Set(FEATURED_ACHIEVEMENT_IDS);
-      const featuredAchievements = this.achievementTemplates.filter((achievement) =>
-        featuredSet.has(achievement.id)
+      const matchesSelectedCategory = (achievement) =>
+        selectedCategoryId === "all" || achievement.categoryId === selectedCategoryId;
+      const featuredAchievements = this.achievementTemplates.filter(
+        (achievement) => featuredSet.has(achievement.id) && matchesSelectedCategory(achievement)
       );
       const libraryAchievements = this.achievementTemplates.filter(
-        (achievement) => !featuredSet.has(achievement.id)
+        (achievement) => !featuredSet.has(achievement.id) && matchesSelectedCategory(achievement)
       );
 
       this.elements.achievementsUnlockedValue.textContent = `${unlockedCount} / ${totalAchievements}`;
@@ -1193,20 +1460,31 @@ window.TurboWingsApplication = (() => {
           ).length;
 
           return `
-            <article class="achievements-category-item ${
-              category.id === "all" ? "is-active" : ""
-            }">
+            <button
+              class="achievements-category-item ${
+                category.id === selectedCategoryId ? "is-active" : ""
+              }"
+              type="button"
+              data-achievement-category="${category.id}"
+            >
               <span class="achievements-category-icon ${category.iconClass}" aria-hidden="true"></span>
               <div class="achievements-category-copy">
                 <strong>${t(category.labelKey)}</strong>
                 <span>${categoryUnlocked} / ${categoryAchievements.length}</span>
               </div>
-            </article>
+            </button>
           `;
         }).join("");
       }
 
       if (this.elements.achievementsFeaturedList) {
+        const featuredSection = this.elements.achievementsFeaturedList.closest(
+          ".achievements-featured-section"
+        );
+        if (featuredSection) {
+          featuredSection.hidden =
+            selectedCategoryId !== "all" && featuredAchievements.length === 0;
+        }
         this.elements.achievementsFeaturedList.innerHTML = featuredAchievements
           .map((achievement) =>
             this.renderAchievementTile(achievement, achievementState[achievement.id], stats, {
@@ -1214,6 +1492,11 @@ window.TurboWingsApplication = (() => {
             })
           )
           .join("");
+      }
+
+      const librarySection = this.elements.achievementsList?.closest(".achievements-library-section");
+      if (librarySection) {
+        librarySection.hidden = selectedCategoryId !== "all" && libraryAchievements.length === 0;
       }
 
       this.elements.achievementsList.innerHTML = libraryAchievements
@@ -1289,7 +1572,10 @@ window.TurboWingsApplication = (() => {
 
       this.elements.gameOverAchievementsList.innerHTML = result.achievementsUnlocked?.length
         ? result.achievementsUnlocked
-            .map((achievement) => `<span class="summary-badge">${t(achievement.titleKey)}</span>`)
+            .map(
+              (achievement) =>
+                `<span class="summary-badge">${this.getAchievementTitle(achievement)}</span>`
+            )
             .join("")
         : `<span class="summary-empty">${t("game.noAchievementsUnlocked")}</span>`;
     }
@@ -1668,6 +1954,223 @@ window.TurboWingsApplication = (() => {
       }
     }
 
+    getShareUrl() {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      return url.toString();
+    }
+
+    getSharePayload() {
+      return {
+        title: t("app.title"),
+        text: t("share.message"),
+        url: this.getShareUrl()
+      };
+    }
+
+    getShareText() {
+      const payload = this.getSharePayload();
+      return `${payload.text} ${payload.url}`.trim();
+    }
+
+    openExternalUrl(url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    openShareWindow(url) {
+      this.openExternalUrl(url);
+    }
+
+    tryOpenAppScheme(url) {
+      return new Promise((resolve) => {
+        let settled = false;
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("aria-hidden", "true");
+        iframe.tabIndex = -1;
+        iframe.style.position = "fixed";
+        iframe.style.width = "1px";
+        iframe.style.height = "1px";
+        iframe.style.opacity = "0";
+        iframe.style.pointerEvents = "none";
+
+        const finalize = (opened) => {
+          if (settled) {
+            return;
+          }
+          settled = true;
+          window.clearTimeout(timerId);
+          window.removeEventListener("blur", handleBlur);
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
+          iframe.remove();
+          resolve(opened);
+        };
+
+        const handleBlur = () => {
+          window.setTimeout(() => {
+            if (document.hidden || !document.hasFocus()) {
+              finalize(true);
+            }
+          }, 160);
+        };
+
+        const handleVisibilityChange = () => {
+          if (document.hidden) {
+            finalize(true);
+          }
+        };
+
+        const timerId = window.setTimeout(() => {
+          finalize(document.hidden || !document.hasFocus());
+        }, 900);
+
+        window.addEventListener("blur", handleBlur);
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        document.body.append(iframe);
+        iframe.src = url;
+      });
+    }
+
+    async tryOpenAppSchemes(urls) {
+      for (const url of urls) {
+        const opened = await this.tryOpenAppScheme(url);
+        if (opened) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    async copyTextToClipboard(value) {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+
+      const helper = document.createElement("textarea");
+      helper.value = value;
+      helper.setAttribute("readonly", "");
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      helper.style.pointerEvents = "none";
+      document.body.append(helper);
+      helper.select();
+
+      let copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } finally {
+        helper.remove();
+      }
+
+      return copied;
+    }
+
+    async shareWithNativeSheet() {
+      if (!navigator.share) {
+        return false;
+      }
+
+      try {
+        await navigator.share(this.getSharePayload());
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    async handleShareAction(target) {
+      const shareUrl = this.getShareUrl();
+      const shareText = this.getShareText();
+
+      if (target === "instagram") {
+        const opened = await this.tryOpenAppSchemes([
+          `instagram://share?text=${encodeURIComponent(shareText)}`,
+          `instagram://app`
+        ]);
+
+        if (opened) {
+          return;
+        }
+
+        const nativeShared = await this.shareWithNativeSheet();
+        if (nativeShared) {
+          return;
+        }
+
+        const copied = await this.copyTextToClipboard(shareText);
+        this.openExternalUrl("https://www.instagram.com/");
+        this.enqueueNotification({
+          type: copied ? "success" : "info",
+          title: t("share.copyTitle"),
+          message: format("share.pasteMessage", {
+            network: t("share.instagram")
+          })
+        });
+        return;
+      }
+
+      if (target === "tiktok") {
+        const opened = await this.tryOpenAppSchemes([
+          `tiktok://share?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+          `snssdk1233://share?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(
+            shareUrl
+          )}`
+        ]);
+
+        if (opened) {
+          return;
+        }
+
+        const nativeShared = await this.shareWithNativeSheet();
+        if (nativeShared) {
+          return;
+        }
+
+        const copied = await this.copyTextToClipboard(shareText);
+        this.openExternalUrl("https://www.tiktok.com/");
+        this.enqueueNotification({
+          type: copied ? "success" : "info",
+          title: t("share.copyTitle"),
+          message: format("share.pasteMessage", {
+            network: t("share.tiktok")
+          })
+        });
+        return;
+      }
+
+      if (target === "copy") {
+        const copied = await this.copyTextToClipboard(shareText);
+        this.enqueueNotification({
+          type: copied ? "success" : "info",
+          title: t("share.copyTitle"),
+          message: copied ? t("share.copyMessage") : shareUrl
+        });
+        return;
+      }
+
+      if (target === "whatsapp") {
+        this.openShareWindow(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
+        return;
+      }
+
+      if (target === "facebook") {
+        this.openShareWindow(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            shareUrl
+          )}&quote=${encodeURIComponent(t("share.message"))}`
+        );
+        return;
+      }
+
+      if (target === "x") {
+        this.openShareWindow(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
+        );
+        return;
+      }
+    }
+
     handleGamePhaseChange(phase) {
       this.hideGameOverlays();
       if (phase === "ready") {
@@ -1768,7 +2271,7 @@ window.TurboWingsApplication = (() => {
         this.enqueueNotification({
           type: "achievement",
           title: t("notify.achievementUnlockedTitle"),
-          message: t(achievement.titleKey)
+          message: this.getAchievementTitle(achievement)
         });
       });
 

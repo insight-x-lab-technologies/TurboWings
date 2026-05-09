@@ -10,7 +10,15 @@
       name="description"
       content="Turbo Wings is a one-touch arcade flying game through a bustling city skyline."
     />
+    <meta name="theme-color" content="#0d1837" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Turbo Wings" />
     <title>Turbo Wings</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <link rel="stylesheet" href="./css/themes.css" />
     <link rel="stylesheet" href="./css/style.css" />
   </head>
@@ -18,16 +26,6 @@
     <div class="app-shell">
       <main class="screen screen-home active" id="homeScreen" data-screen="home">
         <div class="home-layout">
-          <label class="dev-display-mode panel" for="displayModeSelect">
-            <span>View</span>
-            <select id="displayModeSelect" aria-label="Display mode">
-              <option value="auto">Auto</option>
-              <option value="tablet">Tablet</option>
-              <option value="mobile">Mobile</option>
-              <option value="desktop">Desktop</option>
-            </select>
-          </label>
-
           <header class="home-topbar">
             <article class="topbar-pilot panel">
               <div class="topbar-pilot-icon" aria-hidden="true"></div>
@@ -192,6 +190,65 @@
               <div class="achievement-mini-list" id="homeRecentAchievementsList"></div>
             </article>
           </section>
+
+          <footer class="home-share-footer panel" id="homeShareFooter">
+            <button class="install-device-button" id="installDeviceButton" type="button" hidden>
+              <span class="install-device-button-icon" aria-hidden="true"></span>
+              <span class="install-device-button-label" data-i18n="pwa.install"></span>
+            </button>
+            <button
+              class="share-link-button share-network-whatsapp"
+              type="button"
+              data-share-target="whatsapp"
+            >
+              <span class="sr-only" data-i18n="share.whatsapp"></span>
+            </button>
+            <button
+              class="share-link-button share-network-instagram"
+              type="button"
+              data-share-target="instagram"
+            >
+              <span class="sr-only" data-i18n="share.instagram"></span>
+            </button>
+            <button
+              class="share-link-button share-network-tiktok"
+              type="button"
+              data-share-target="tiktok"
+            >
+              <span class="sr-only" data-i18n="share.tiktok"></span>
+            </button>
+            <button
+              class="share-link-button share-network-facebook"
+              type="button"
+              data-share-target="facebook"
+            >
+              <span class="sr-only" data-i18n="share.facebook"></span>
+            </button>
+            <button class="share-link-button share-network-x" type="button" data-share-target="x">
+              <span class="sr-only" data-i18n="share.x"></span>
+            </button>
+            <button
+              class="share-link-button share-network-copy"
+              type="button"
+              data-share-target="copy"
+            >
+              <span class="sr-only" data-i18n="share.copy"></span>
+            </button>
+            <button
+              class="share-link-button share-network-donate"
+              type="button"
+              data-open-screen="donate"
+            >
+              <span class="sr-only" data-i18n="donate.title"></span>
+            </button>
+            <button
+              class="share-link-button share-network-credits"
+              type="button"
+              data-open-screen="credits"
+            >
+              <span class="sr-only" data-i18n="credits.title"></span>
+            </button>
+          </footer>
 
         </div>
       </main>
@@ -606,11 +663,6 @@
               </div>
 
               <div class="achievements-category-list" id="achievementsCategoryList"></div>
-
-              <div class="achievements-side-action">
-                <span class="achievements-side-action-icon" aria-hidden="true"></span>
-                <strong data-i18n="achievements.recentlyUnlocked"></strong>
-              </div>
             </aside>
 
             <div class="achievements-main">
@@ -633,6 +685,120 @@
               </section>
             </div>
           </div>
+        </section>
+      </section>
+
+      <section class="screen screen-panel" id="donateScreen" data-screen="donate" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel info-shell donate-shell">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="donate.eyebrow"></span>
+              <h2 data-i18n="donate.title"></h2>
+              <p data-i18n="donate.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromDonateButton"
+              type="button"
+              data-i18n="donate.back"
+            ></button>
+          </div>
+
+          <div class="donation-grid">
+            <article class="donation-card panel">
+              <span class="donation-icon donation-icon-kofi" aria-hidden="true"></span>
+              <strong>Ko-Fi</strong>
+              <p class="helper-text" data-i18n="donate.kofiDescription"></p>
+              <button
+                class="button button-primary"
+                id="donationKoFiButton"
+                type="button"
+                data-i18n="donate.openKofi"
+              ></button>
+            </article>
+
+            <article class="donation-card panel">
+              <span class="donation-icon donation-icon-bmc" aria-hidden="true"></span>
+              <strong>Buy Me a Coffee</strong>
+              <p class="helper-text" data-i18n="donate.coffeeDescription"></p>
+              <button
+                class="button button-primary"
+                id="donationCoffeeButton"
+                type="button"
+                data-i18n="donate.openCoffee"
+              ></button>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen screen-panel" id="creditsScreen" data-screen="credits" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-cloud cloud-c"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel info-shell credits-shell">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="credits.eyebrow"></span>
+              <h2 data-i18n="credits.title"></h2>
+              <p data-i18n="credits.subtitle"></p>
+            </div>
+            <button
+              class="button button-secondary button-compact"
+              id="backFromCreditsButton"
+              type="button"
+              data-i18n="credits.back"
+            ></button>
+          </div>
+
+          <article class="credits-card panel">
+            <div class="credits-brand-lockup">
+              <img
+                src="./assets/images/v1_default_logo.png"
+                class="credits-brand-logo"
+                alt="Insight X Lab Game Studio"
+              />
+              <div class="credits-brand-copy">
+                <strong>Insight X Lab Game Studio</strong>
+                <span data-i18n="credits.tagline"></span>
+              </div>
+            </div>
+
+            <div class="credits-copy">
+              <p>
+                Insight X Lab Game Studio is an independent game development company focused on
+                creating immersive, creative, and memorable gaming experiences. We combine
+                innovation, storytelling, and strong visual identity to build games that connect
+                players with unique worlds, strategic challenges, and unforgettable adventures.
+              </p>
+              <p>
+                Our studio believes that great games are born from imagination, passion, and
+                attention to detail. From concept design to gameplay mechanics, every project is
+                crafted with the goal of delivering entertainment that feels both exciting and
+                meaningful.
+              </p>
+              <p>
+                At Insight X Lab, we explore ideas beyond the ordinary, blending technology, art,
+                and player experience to create games that inspire curiosity and emotion. Whether
+                developing casual experiences, strategic adventures, or original worlds, our
+                mission is simple: transform ideas into games that players truly remember.
+              </p>
+              <p>We do not just create games. We create worlds to be discovered.</p>
+            </div>
+          </article>
         </section>
       </section>
 
@@ -825,27 +991,27 @@
               </div>
 
               <div class="game-over-stats">
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-final-score">
                   <span class="stat-label" data-i18n="game.finalScore"></span>
                   <strong class="stat-value" id="finalScoreValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-best-score">
                   <span class="stat-label" data-i18n="game.bestScore"></span>
                   <strong class="stat-value" id="bestScoreValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-run-coins">
                   <span class="stat-label" data-i18n="game.collectedCoins"></span>
                   <strong class="stat-value" id="finalCoinsValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-coin-bank">
                   <span class="stat-label" data-i18n="game.totalCoins"></span>
                   <strong class="stat-value compact" id="gameOverTotalCoinsValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-time">
                   <span class="stat-label" data-i18n="game.timeSurvived"></span>
                   <strong class="stat-value compact" id="gameOverTimeValue">0s</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-game-over-flight-level">
                   <span class="stat-label" data-i18n="game.flightLevelReached"></span>
                   <strong class="stat-value compact" id="gameOverFlightLevelValue">FL 1</strong>
                 </article>
@@ -921,6 +1087,10 @@
     <script defer>
       window.addEventListener("DOMContentLoaded", () => {
         window.TurboWingsApplication?.boot();
+
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+        }
       });
     </script>
   </body>

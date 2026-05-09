@@ -10,7 +10,8 @@ window.TurboWingsProgression = (() => {
     totalTimePlayed: 0,
     totalCollisions: 0,
     totalShieldSaves: 0,
-    totalMagnetCoins: 0
+    totalMagnetCoins: 0,
+    totalDefaultThemeRuns: 0
   };
 
   function clampNumber(value, fallback = 0) {
@@ -30,7 +31,8 @@ window.TurboWingsProgression = (() => {
       totalTimePlayed: clampNumber(rawStats?.totalTimePlayed),
       totalCollisions: Math.round(clampNumber(rawStats?.totalCollisions)),
       totalShieldSaves: Math.round(clampNumber(rawStats?.totalShieldSaves)),
-      totalMagnetCoins: Math.round(clampNumber(rawStats?.totalMagnetCoins))
+      totalMagnetCoins: Math.round(clampNumber(rawStats?.totalMagnetCoins)),
+      totalDefaultThemeRuns: Math.round(clampNumber(rawStats?.totalDefaultThemeRuns))
     };
   }
 
@@ -59,6 +61,9 @@ window.TurboWingsProgression = (() => {
     nextStats.totalCollisions += Math.max(1, Math.round(clampNumber(runSummary.totalCollisions, 1)));
     nextStats.totalShieldSaves += Math.round(clampNumber(runSummary.shieldSaves));
     nextStats.totalMagnetCoins += Math.round(clampNumber(runSummary.coinsCollectedWithMagnet));
+    if (runSummary.themeUsed === "default") {
+      nextStats.totalDefaultThemeRuns += 1;
+    }
 
     return {
       stats: nextStats,

@@ -1,0 +1,57 @@
+{
+  "name": "Turbo Wings",
+  "short_name": "Turbo Wings",
+  "description": "A fast arcade flight adventure through a glowing city skyline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#081221",
+  "theme_color": "#0d1837",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["games", "arcade", "entertainment"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./assets/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pwa/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./assets/pwa/screenshot-home-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Turbo Wings home screen on mobile"
+    },
+    {
+      "src": "./assets/pwa/screenshot-gameplay-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Turbo Wings gameplay overview"
+    }
+  ]
+}
