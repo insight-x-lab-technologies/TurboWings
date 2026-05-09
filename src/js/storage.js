@@ -50,7 +50,7 @@ window.TurboWingsStorage = (() => {
           ? Math.max(0, Math.round(Number(entry.coinsCollected)))
           : 0,
         timestamp: Number.isFinite(Number(entry.timestamp)) ? Number(entry.timestamp) : Date.now(),
-        themeId: String(entry.themeId || "city-day")
+        themeId: String(entry.themeId || "default")
       }))
       .sort((entryA, entryB) => {
         if (entryB.score !== entryA.score) {

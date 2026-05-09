@@ -95,6 +95,16 @@ window.TurboWingsGameplay = (() => {
     return Math.min(max, Math.max(min, value));
   }
 
+  function createThemeImage(src) {
+    if (!src) {
+      return null;
+    }
+
+    const image = new Image();
+    image.src = src;
+    return image;
+  }
+
   function getDifficultyDefinitions() {
     return DIFFICULTY_DEFINITIONS.map((difficulty) => ({ ...difficulty }));
   }
@@ -150,7 +160,16 @@ window.TurboWingsGameplay = (() => {
         effectsEnabled: true
       };
       this.effectSignature = "";
+      this.debugCollisionEnabled = false;
       this.flightLevel = 1;
+      this.themeAssets = {
+        themeId: null,
+        background: null,
+        plane: null,
+        planeFrame: null,
+        obstacles: [],
+        icons: {}
+      };
 
       this.handlePointerDown = this.handlePointerDown.bind(this);
       this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -163,6 +182,7 @@ window.TurboWingsGameplay = (() => {
 
       this.reset();
       this.resize();
+      this.preloadThemeAssets();
     }
 
     readBestScore() {
@@ -173,6 +193,43 @@ window.TurboWingsGameplay = (() => {
 
     getBestScore() {
       return this.bestScore;
+    }
+
+    preloadThemeAssets(themeId = this.activeThemeId) {
+      const theme = this.getTheme?.(themeId);
+      const assets = theme?.assets;
+      if (!assets || this.themeAssets.themeId === themeId) {
+        return;
+      }
+
+      this.themeAssets = {
+        themeId,
+        background: createThemeImage(assets.backgroundImage),
+        plane: createThemeImage(assets.gameplayJet),
+        planeFrame: assets.gameplayJetFrame || null,
+        obstacles: Array.isArray(assets.obstacles)
+          ? assets.obstacles.map((path) => createThemeImage(path)).filter(Boolean)
+          : [],
+        icons: {
+          coin: createThemeImage(assets.icons?.coinGold || assets.icons?.coin),
+          powerupShield: createThemeImage(assets.icons?.powerupShield),
+          powerupMagnet: createThemeImage(assets.icons?.powerupMagnet),
+          powerupSlow: createThemeImage(assets.icons?.powerupSlow)
+        }
+      };
+
+      [
+        this.themeAssets.background,
+        this.themeAssets.plane,
+        ...this.themeAssets.obstacles,
+        ...Object.values(this.themeAssets.icons)
+      ]
+        .filter(Boolean)
+        .forEach((image) => {
+          if (!image.complete) {
+            image.addEventListener("load", () => this.draw(), { once: true });
+          }
+        });
     }
 
     persistBestScore(score) {
@@ -268,12 +325,13 @@ window.TurboWingsGameplay = (() => {
     }
 
     updateResponsiveMetrics() {
-      this.plane.x = Math.min(this.width * 0.28, 180);
-      this.plane.radius = Math.max(18, Math.min(26, this.width * 0.03));
-      this.obstacleWidth = Math.max(74, Math.min(126, this.width * 0.11));
-      this.baseGap = Math.max(128, this.baseGap);
-      this.minGap = Math.max(106, this.minGap);
-      this.groundPadding = clamp(this.height * 0.04, 28, 44);
+      this.plane.x = Math.min(this.width * 0.23, 270);
+      this.plane.radius = clamp(this.width * 0.028, 24, 34) * 0.5;
+      this.obstacleWidth = clamp(this.width * 0.12, 116, 184);
+      this.baseGap = Math.max(152, this.baseGap);
+      this.minGap = Math.max(118, this.minGap);
+      this.groundPadding = clamp(this.height * 0.04, 26, 40);
+      this.ceilingPadding = clamp(this.height * 0.02, 12, 22);
     }
 
     seedClouds() {
@@ -363,11 +421,12 @@ window.TurboWingsGameplay = (() => {
     enter({
       difficultyId = DEFAULT_DIFFICULTY_ID,
       tuning = {},
-      themeId = "city-day",
+      themeId = "default",
       features = {}
     } = {}) {
       this.isInteractive = true;
       this.activeThemeId = themeId;
+      this.preloadThemeAssets(themeId);
       this.featureFlags = { ...this.featureFlags, ...features };
       this.applyDifficultyConfig(difficultyId, tuning);
       this.reset();
@@ -400,7 +459,14 @@ window.TurboWingsGameplay = (() => {
       this.haltLoop();
     }
 
-    setTheme() {
+    setTheme(themeId = this.activeThemeId) {
+      this.activeThemeId = themeId;
+      this.preloadThemeAssets(themeId);
+      this.draw();
+    }
+
+    setCollisionDebug(enabled) {
+      this.debugCollisionEnabled = !!enabled;
       this.draw();
     }
 
@@ -513,7 +579,7 @@ window.TurboWingsGameplay = (() => {
           this.consumeShield(collision);
         } else {
           this.playSoundOnce("collision", 0.18);
-          this.endRun();
+          this.endRun(collision);
         }
       }
     }
@@ -846,6 +912,19 @@ window.TurboWingsGameplay = (() => {
       return candidates[candidates.length - 1]?.type || "building";
     }
 
+    pickObstacleAssetIndex(flightLevel) {
+      const availableCount = Math.max(1, this.themeAssets.obstacles.length || 0);
+      if (availableCount === 1) {
+        return 0;
+      }
+
+      const maxAssetIndex = Math.min(
+        availableCount - 1,
+        Math.floor((Math.max(1, flightLevel) - 1) * 2.5)
+      );
+      return Math.floor(Math.random() * (maxAssetIndex + 1));
+    }
+
     spawnObstacle(difficultyState) {
       const paddingTop = this.height * 0.12;
       const paddingBottom = this.height * 0.12;
@@ -865,6 +944,8 @@ window.TurboWingsGameplay = (() => {
         accentOffset: Math.random() * 20,
         topStyle: this.pickObstacleVariant(difficultyState.flightLevel),
         bottomStyle: this.pickObstacleVariant(difficultyState.flightLevel),
+        topAssetIndex: this.pickObstacleAssetIndex(difficultyState.flightLevel),
+        bottomAssetIndex: this.pickObstacleAssetIndex(difficultyState.flightLevel),
         hazards: [],
         veils: []
       };
@@ -1011,24 +1092,28 @@ window.TurboWingsGameplay = (() => {
       return false;
     }
 
-    getCollision() {
-      const hitbox = {
+    getPlaneHitbox() {
+      return {
         x: this.plane.x - this.plane.radius * 0.85,
         y: this.plane.y - this.plane.radius * 0.55,
         width: this.plane.radius * 1.7,
         height: this.plane.radius * 1.1
       };
+    }
+
+    getCollision() {
+      const hitbox = this.getPlaneHitbox();
 
       if (this.invulnerableTimer > 0) {
         return null;
       }
 
       if (hitbox.y <= this.ceilingPadding) {
-        return { kind: "boundary-top" };
+        return { kind: "boundary-top", hitbox };
       }
 
       if (hitbox.y + hitbox.height >= this.height - this.groundPadding) {
-        return { kind: "boundary-bottom" };
+        return { kind: "boundary-bottom", hitbox };
       }
 
       if (!this.featureFlags.obstaclesEnabled) {
@@ -1045,7 +1130,7 @@ window.TurboWingsGameplay = (() => {
           const hitsTop = hitbox.y < gapTop;
           const hitsBottom = hitbox.y + hitbox.height > gapBottom;
           if (hitsTop || hitsBottom) {
-            return { kind: "obstacle", obstacle };
+            return { kind: hitsTop ? "obstacle-top" : "obstacle-bottom", obstacle, hitbox };
           }
         }
 
@@ -1058,7 +1143,7 @@ window.TurboWingsGameplay = (() => {
               this.plane.y - hazardY
             );
             if (distance < this.plane.radius * 0.84 + hazard.radius * 0.88) {
-              return { kind: "hazard", obstacle, hazard };
+              return { kind: "hazard", obstacle, hazard, hitbox };
             }
           } else {
             if (
@@ -1067,7 +1152,7 @@ window.TurboWingsGameplay = (() => {
               hitbox.y + hitbox.height > hazardY - hazard.height * 0.8 &&
               hitbox.y < hazardY + hazard.height * 0.8
             ) {
-              return { kind: "hazard", obstacle, hazard };
+              return { kind: "hazard", obstacle, hazard, hitbox };
             }
           }
         }
@@ -1076,7 +1161,63 @@ window.TurboWingsGameplay = (() => {
       return null;
     }
 
-    endRun() {
+    getCollisionContactPoint(collision) {
+      if (!collision) {
+        return { x: this.plane.x, y: this.plane.y };
+      }
+
+      const hitbox = collision.hitbox || this.getPlaneHitbox();
+      const planeCenterX = hitbox.x + hitbox.width * 0.5;
+      const planeCenterY = hitbox.y + hitbox.height * 0.5;
+
+      if (collision.kind === "boundary-top") {
+        return { x: planeCenterX, y: this.ceilingPadding };
+      }
+
+      if (collision.kind === "boundary-bottom") {
+        return { x: planeCenterX, y: this.height - this.groundPadding };
+      }
+
+      if (collision.kind === "hazard" && collision.hazard) {
+        const hazard = collision.hazard;
+        const hazardX = collision.obstacle.x + hazard.offsetX + (hazard.swayX || 0);
+        const hazardY = hazard.currentY || hazard.baseY;
+
+        if (hazard.type === "balloon") {
+          const angle = Math.atan2(planeCenterY - hazardY, planeCenterX - hazardX);
+          return {
+            x: hazardX + Math.cos(angle) * hazard.radius,
+            y: hazardY + Math.sin(angle) * hazard.radius
+          };
+        }
+
+        return {
+          x: Math.max(hazardX - hazard.width * 0.62, Math.min(planeCenterX, hazardX + hazard.width * 0.62)),
+          y: Math.max(hazardY - hazard.height * 0.8, Math.min(planeCenterY, hazardY + hazard.height * 0.8))
+        };
+      }
+
+      if (collision.obstacle) {
+        const gapTop = collision.obstacle.gapY - collision.obstacle.gapHeight * 0.5;
+        const gapBottom = collision.obstacle.gapY + collision.obstacle.gapHeight * 0.5;
+        return {
+          x: Math.max(collision.obstacle.x, Math.min(hitbox.x + hitbox.width, collision.obstacle.x + collision.obstacle.width)),
+          y: collision.kind === "obstacle-top" ? gapTop : gapBottom
+        };
+      }
+
+      return { x: planeCenterX, y: planeCenterY };
+    }
+
+    spawnExplosion(x, y) {
+      this.spawnBurst(x, y, "#ffd8b3", 16, 190, 1.12);
+      this.spawnBurst(x, y, "#ff8f4e", 22, 240, 1.08);
+      this.spawnBurst(x, y, "#fff2d9", 10, 110, 1.18);
+      this.spawnRing(x, y, "rgba(255, 214, 176, 0.92)", this.plane.radius * 2.4, 0.2);
+      this.spawnRing(x, y, "rgba(255, 132, 90, 0.72)", this.plane.radius * 3.2, 0.26);
+    }
+
+    endRun(collision = null) {
       if (this.ended) {
         return;
       }
@@ -1086,9 +1227,9 @@ window.TurboWingsGameplay = (() => {
       this.haltLoop();
       this.runMetrics.totalCollisions += 1;
       const wasNewBestScore = this.score > this.bestScore;
+      const contactPoint = this.getCollisionContactPoint(collision);
       this.persistBestScore(this.score);
-      this.spawnBurst(this.plane.x, this.plane.y, "#ff8c6a", 12, 160, 1.22);
-      this.spawnRing(this.plane.x, this.plane.y, "#ffd1bf", this.plane.radius * 1.9, 0.32);
+      this.spawnExplosion(contactPoint.x, contactPoint.y);
       this.playSoundOnce("gameover", 0.2);
       this.draw();
       this.onPhaseChange?.("gameover");
@@ -1152,10 +1293,13 @@ window.TurboWingsGameplay = (() => {
 
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.width, this.height);
-      this.drawSky(theme);
-      this.drawSun(theme);
-      this.drawClouds(theme);
-      this.drawCity(theme);
+      const drewImageBackground = this.drawBackgroundImage(theme);
+      if (!drewImageBackground) {
+        this.drawSky(theme);
+        this.drawSun(theme);
+        this.drawClouds(theme);
+        this.drawCity(theme);
+      }
       this.drawObstacles(theme);
       this.drawCoins();
       this.drawPowerups();
@@ -1165,10 +1309,93 @@ window.TurboWingsGameplay = (() => {
       this.drawParticles();
       this.drawVeils(theme);
       this.drawAtmosphere();
+      this.drawCollisionDebug();
 
       if (!this.started && !this.ended) {
         this.drawReadyPrompt();
       }
+    }
+
+    drawCollisionDebug() {
+      if (!this.debugCollisionEnabled) {
+        return;
+      }
+
+      const ctx = this.ctx;
+      const hitbox = this.getPlaneHitbox();
+      ctx.save();
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 6]);
+
+      ctx.strokeStyle = "rgba(110, 232, 255, 0.95)";
+      ctx.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+
+      for (const obstacle of this.obstacles) {
+        const gapTop = obstacle.gapY - obstacle.gapHeight * 0.5;
+        const gapBottom = obstacle.gapY + obstacle.gapHeight * 0.5;
+
+        ctx.strokeStyle = "rgba(255, 143, 78, 0.95)";
+        ctx.strokeRect(obstacle.x, 0, obstacle.width, gapTop);
+        ctx.strokeRect(obstacle.x, gapBottom, obstacle.width, this.height - gapBottom);
+
+        for (const hazard of obstacle.hazards) {
+          const hazardX = obstacle.x + hazard.offsetX + (hazard.swayX || 0);
+          const hazardY = hazard.currentY || hazard.baseY;
+          ctx.strokeStyle = "rgba(255, 236, 132, 0.95)";
+          if (hazard.type === "balloon") {
+            ctx.beginPath();
+            ctx.arc(hazardX, hazardY, hazard.radius, 0, Math.PI * 2);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(
+              hazardX - hazard.width * 0.62,
+              hazardY - hazard.height * 0.8,
+              hazard.width * 1.24,
+              hazard.height * 1.6
+            );
+          }
+        }
+      }
+
+      ctx.restore();
+    }
+
+    drawBackgroundImage(theme) {
+      const image = this.themeAssets.background;
+      if (!image?.complete || !image.naturalWidth || !image.naturalHeight) {
+        return false;
+      }
+
+      const sourceAspect = image.naturalWidth / image.naturalHeight;
+      const targetAspect = this.width / this.height;
+      let sourceWidth = image.naturalWidth;
+      let sourceHeight = image.naturalHeight;
+      let sourceX = 0;
+      let sourceY = 0;
+
+      if (sourceAspect > targetAspect) {
+        sourceWidth = image.naturalHeight * targetAspect;
+        sourceX = (image.naturalWidth - sourceWidth) * 0.5;
+      } else {
+        sourceHeight = image.naturalWidth / targetAspect;
+        sourceY = Math.max(0, image.naturalHeight - sourceHeight);
+      }
+
+      this.ctx.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        0,
+        0,
+        this.width,
+        this.height
+      );
+
+      this.ctx.fillStyle = theme.haze || "rgba(255, 155, 96, 0.08)";
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      return true;
     }
 
     drawSky(theme) {
@@ -1259,28 +1486,79 @@ window.TurboWingsGameplay = (() => {
       for (const obstacle of this.obstacles) {
         const gapTop = obstacle.gapY - obstacle.gapHeight * 0.5;
         const gapBottom = obstacle.gapY + obstacle.gapHeight * 0.5;
+        const topImage = this.themeAssets.obstacles[obstacle.topAssetIndex];
+        const bottomImage = this.themeAssets.obstacles[obstacle.bottomAssetIndex];
 
-        this.drawTower(
-          obstacle.x,
-          0,
-          obstacle.width,
-          gapTop,
-          obstacle.accentOffset,
-          theme,
-          true,
-          obstacle.topStyle
-        );
-        this.drawTower(
-          obstacle.x,
-          gapBottom,
-          obstacle.width,
-          this.height - gapBottom,
-          obstacle.accentOffset,
-          theme,
-          false,
-          obstacle.bottomStyle
-        );
+        if (topImage?.complete && topImage.naturalWidth) {
+          this.drawObstacleImage(obstacle.x, 0, obstacle.width, gapTop, topImage, true);
+        } else {
+          this.drawTower(
+            obstacle.x,
+            0,
+            obstacle.width,
+            gapTop,
+            obstacle.accentOffset,
+            theme,
+            true,
+            obstacle.topStyle
+          );
+        }
+
+        if (bottomImage?.complete && bottomImage.naturalWidth) {
+          this.drawObstacleImage(
+            obstacle.x,
+            this.height - (this.height - gapBottom),
+            obstacle.width,
+            this.height - gapBottom,
+            bottomImage
+          );
+        } else {
+          this.drawTower(
+            obstacle.x,
+            gapBottom,
+            obstacle.width,
+            this.height - gapBottom,
+            obstacle.accentOffset,
+            theme,
+            false,
+            obstacle.bottomStyle
+          );
+        }
       }
+    }
+
+    drawObstacleImage(x, y, width, height, image, flipY = false) {
+      if (height <= 0 || !image?.naturalWidth || !image?.naturalHeight) {
+        return;
+      }
+
+      const ctx = this.ctx;
+      const naturalHeight = width * (image.naturalHeight / image.naturalWidth);
+      const cropRatio = Math.min(1, height / naturalHeight);
+      const sourceHeight = image.naturalHeight * cropRatio;
+
+      ctx.save();
+      ctx.shadowColor = "rgba(0, 0, 0, 0.34)";
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = flipY ? -10 : 10;
+      if (flipY) {
+        ctx.translate(x + width * 0.5, y + height * 0.5);
+        ctx.rotate(Math.PI);
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.naturalWidth,
+          sourceHeight,
+          -width * 0.5,
+          -height * 0.5,
+          width,
+          height
+        );
+      } else {
+        ctx.drawImage(image, 0, 0, image.naturalWidth, sourceHeight, x, y, width, height);
+      }
+      ctx.restore();
     }
 
     drawTower(x, y, width, height, accentOffset, theme, topTower, style) {
@@ -1416,6 +1694,7 @@ window.TurboWingsGameplay = (() => {
       }
 
       const ctx = this.ctx;
+      const coinImage = this.themeAssets.icons.coin;
       for (const coin of this.coins) {
         const pulse = this.featureFlags.effectsEnabled ? 1 + Math.sin(coin.phase) * 0.12 : 1;
         const radius = coin.radius * pulse;
@@ -1423,25 +1702,24 @@ window.TurboWingsGameplay = (() => {
         ctx.save();
         ctx.translate(coin.x, coin.y);
         ctx.rotate(this.featureFlags.effectsEnabled ? Math.sin(coin.phase * 0.7) * 0.3 : 0);
-        ctx.scale(pulse, 1);
+        if (coinImage?.complete && coinImage.naturalWidth) {
+          const size = radius * 2.5;
+          ctx.shadowColor = "rgba(255, 185, 79, 0.42)";
+          ctx.shadowBlur = 22;
+          ctx.drawImage(coinImage, -size * 0.5, -size * 0.5, size, size);
+        } else {
+          ctx.scale(pulse, 1);
+          ctx.fillStyle = "#ffd54f";
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, 0, Math.PI * 2);
+          ctx.fill();
 
-        ctx.fillStyle = "#ffd54f";
-        ctx.beginPath();
-        ctx.arc(0, 0, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "#ffb300";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(0, 0, radius * 0.76, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.strokeStyle = "rgba(255,255,255,0.7)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(-radius * 0.18, -radius * 0.54);
-        ctx.lineTo(radius * 0.42, -radius * 0.18);
-        ctx.stroke();
+          ctx.strokeStyle = "#ffb300";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.76, 0, Math.PI * 2);
+          ctx.stroke();
+        }
 
         ctx.restore();
       }
@@ -1461,7 +1739,19 @@ window.TurboWingsGameplay = (() => {
           : 1;
         this.ctx.scale(scale, scale);
 
-        if (powerup.type === "shield") {
+        const powerupImage =
+          powerup.type === "shield"
+            ? this.themeAssets.icons.powerupShield
+            : powerup.type === "magnet"
+              ? this.themeAssets.icons.powerupMagnet
+              : this.themeAssets.icons.powerupSlow;
+
+        if (powerupImage?.complete && powerupImage.naturalWidth) {
+          const size = powerup.radius * 2.5;
+          this.ctx.shadowColor = this.getPowerupColor(powerup.type);
+          this.ctx.shadowBlur = 22;
+          this.ctx.drawImage(powerupImage, -size * 0.5, -size * 0.5, size, size);
+        } else if (powerup.type === "shield") {
           this.drawShieldPowerup(powerup.radius);
         } else if (powerup.type === "magnet") {
           this.drawMagnetPowerup(powerup.radius);
@@ -1627,6 +1917,14 @@ window.TurboWingsGameplay = (() => {
       ctx.translate(x, y);
       ctx.rotate(rotation);
 
+      const engineGlow = ctx.createRadialGradient(-radius * 1.1, 0, 0, -radius * 1.1, 0, radius);
+      engineGlow.addColorStop(0, "rgba(255, 188, 108, 0.92)");
+      engineGlow.addColorStop(1, "rgba(255, 188, 108, 0)");
+      ctx.fillStyle = engineGlow;
+      ctx.beginPath();
+      ctx.arc(-radius * 1.05, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
+
       if (this.activeEffects.shield > 0 || this.invulnerableTimer > 0) {
         const shieldPulse = this.featureFlags.effectsEnabled
           ? 1 + Math.sin((this.elapsed + this.plane.bob) * 8) * 0.08
@@ -1639,12 +1937,24 @@ window.TurboWingsGameplay = (() => {
         ctx.stroke();
       }
 
-      ctx.fillStyle = theme.planeBody;
+      if (this.drawPlaneSprite(radius)) {
+        ctx.restore();
+        return;
+      }
+
+      const bodyGradient = ctx.createLinearGradient(-radius * 1.2, 0, radius * 1.2, 0);
+      bodyGradient.addColorStop(0, "#ff6a2d");
+      bodyGradient.addColorStop(0.45, theme.planeBody);
+      bodyGradient.addColorStop(1, "#ffb56c");
+      ctx.fillStyle = bodyGradient;
       ctx.beginPath();
       ctx.ellipse(0, 0, radius * 1.18, radius * 0.7, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = theme.planeWing;
+      const wingGradient = ctx.createLinearGradient(-radius * 0.4, -radius, radius, radius);
+      wingGradient.addColorStop(0, "#ffffff");
+      wingGradient.addColorStop(1, theme.planeWing);
+      ctx.fillStyle = wingGradient;
       ctx.beginPath();
       ctx.moveTo(-radius * 0.3, -radius * 0.05);
       ctx.lineTo(radius * 0.65, -radius * 0.9);
@@ -1678,7 +1988,42 @@ window.TurboWingsGameplay = (() => {
       ctx.lineTo(radius * 0.82, radius * 0.46);
       ctx.stroke();
 
+      ctx.fillStyle = "rgba(255, 212, 169, 0.92)";
+      ctx.beginPath();
+      ctx.ellipse(-radius * 1.05, 0, radius * 0.24, radius * 0.18, 0, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
+    }
+
+    drawPlaneSprite(radius) {
+      const planeImage = this.themeAssets.plane;
+      if (!planeImage?.complete || !planeImage.naturalWidth || !planeImage.naturalHeight) {
+        return false;
+      }
+
+      const sourceFrame = this.themeAssets.planeFrame || {
+        x: 0,
+        y: 0,
+        width: planeImage.naturalWidth,
+        height: planeImage.naturalHeight
+      };
+      const drawWidth = radius * 4.9;
+      const drawHeight = drawWidth * (sourceFrame.height / sourceFrame.width);
+
+      this.ctx.drawImage(
+        planeImage,
+        sourceFrame.x,
+        sourceFrame.y,
+        sourceFrame.width,
+        sourceFrame.height,
+        -drawWidth * 0.58,
+        -drawHeight * 0.54,
+        drawWidth,
+        drawHeight
+      );
+
+      return true;
     }
 
     drawParticles() {
@@ -1731,6 +2076,9 @@ window.TurboWingsGameplay = (() => {
       vignette.addColorStop(1, "rgba(0,0,0,0.08)");
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, this.width, this.height);
+
+      ctx.fillStyle = "rgba(255, 159, 87, 0.08)";
+      ctx.fillRect(0, this.height * 0.6, this.width, this.height * 0.4);
 
       if (this.activeEffects.slow > 0) {
         ctx.fillStyle = "rgba(143, 182, 255, 0.08)";

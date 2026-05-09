@@ -1,274 +1,157 @@
 window.TurboWingsThemes = (() => {
-  const DEFAULT_THEME = "city-day";
+  const DEFAULT_THEME = "default";
+  const ASSET_ROOT = "./assets/images";
+  const SONG_ROOT = "./assets/songs";
+
+  const buildObstacleList = () => [`${ASSET_ROOT}/v1_default_game_obstacle_11.png`];
+
+  const DEFAULT_AUDIO = {
+    menu: {
+      src: `${SONG_ROOT}/v1_default_menu.mp3`,
+      volume: 0.22
+    },
+    gameplay: {
+      src: `${SONG_ROOT}/v1_default_gameplay.mp3`,
+      volume: 0.24
+    },
+    button: {
+      wave: "square",
+      volume: 0.04,
+      pattern: [
+        [880, 0.04, 0.01],
+        [1174.66, 0.06, 0.01]
+      ]
+    },
+    navigation: {
+      wave: "triangle",
+      volume: 0.035,
+      pattern: [
+        [659.25, 0.05, 0.01],
+        [987.77, 0.08, 0.02]
+      ]
+    },
+    gameplaySfx: {
+      flap: {
+        wave: "triangle",
+        volume: 0.04,
+        pattern: [
+          [740, 0.03, 0.01],
+          [980, 0.06, 0.01]
+        ]
+      },
+      coin: {
+        wave: "square",
+        volume: 0.03,
+        pattern: [
+          [1046.5, 0.03, 0.01],
+          [1396.91, 0.05, 0.01]
+        ]
+      },
+      powerup: {
+        wave: "triangle",
+        volume: 0.034,
+        pattern: [
+          [523.25, 0.04, 0.01],
+          [783.99, 0.05, 0.01],
+          [1046.5, 0.08, 0.02]
+        ]
+      },
+      shield: {
+        wave: "sine",
+        volume: 0.036,
+        pattern: [
+          [392, 0.04, 0.01],
+          [587.33, 0.08, 0.01],
+          [440, 0.07, 0.01]
+        ]
+      },
+      collision: {
+        wave: "sawtooth",
+        volume: 0.032,
+        pattern: [
+          [220, 0.05, 0.01],
+          [164.81, 0.08, 0.01],
+          [130.81, 0.1, 0.02]
+        ]
+      },
+      gameover: {
+        wave: "triangle",
+        volume: 0.034,
+        pattern: [
+          [349.23, 0.08, 0.02],
+          [261.63, 0.1, 0.02],
+          [196, 0.16, 0.04]
+        ]
+      },
+      pause: {
+        wave: "sine",
+        volume: 0.03,
+        pattern: [
+          [392, 0.05, 0.01],
+          [329.63, 0.08, 0.01]
+        ]
+      },
+      resume: {
+        wave: "sine",
+        volume: 0.03,
+        pattern: [
+          [329.63, 0.05, 0.01],
+          [440, 0.08, 0.01]
+        ]
+      }
+    }
+  };
 
   const THEMES = {
-    "city-day": {
-      id: "city-day",
-      labelKey: "theme.cityDay",
-      className: "theme-city-day",
-      gameplay: {
-        skyStart: "#6fcbff",
-        skyMid: "#99e1ff",
-        skyEnd: "#ffe3a8",
-        sunColor: "rgba(255, 226, 120, 0.82)",
-        cloud: "rgba(255, 255, 255, 0.9)",
-        cityBack: "#93bce4",
-        cityMid: "#5f8dba",
-        cityFront: "#325f8a",
-        window: "rgba(255, 233, 167, 0.95)",
-        obstacleMain: "#366796",
-        obstacleTop: "#5c90c1",
-        planeBody: "#ff6b35",
-        planeWing: "#f6fbff",
-        planeAccent: "#17324e",
-        trail: "rgba(255, 255, 255, 0.75)"
-      },
-      audio: {
-        menu: {
-          wave: "triangle",
-          volume: 0.045,
-          pattern: [
-            [523.25, 0.18, 0.04],
-            [659.25, 0.18, 0.04],
-            [783.99, 0.24, 0.06],
-            [659.25, 0.14, 0.04],
-            [587.33, 0.24, 0.2]
-          ]
-        },
-        gameplay: {
-          wave: "sawtooth",
-          volume: 0.035,
-          pattern: [
-            [392, 0.12, 0.02],
-            [523.25, 0.12, 0.02],
-            [659.25, 0.12, 0.04],
-            [523.25, 0.12, 0.02],
-            [783.99, 0.16, 0.06],
-            [659.25, 0.12, 0.04],
-            [587.33, 0.18, 0.18]
-          ]
-        },
-        button: {
-          wave: "square",
-          volume: 0.04,
-          pattern: [
-            [880, 0.04, 0.01],
-            [1174.66, 0.06, 0.01]
-          ]
-        },
-        navigation: {
-          wave: "triangle",
-          volume: 0.035,
-          pattern: [
-            [659.25, 0.05, 0.01],
-            [987.77, 0.08, 0.02]
-          ]
-        },
-        gameplaySfx: {
-          flap: {
-            wave: "triangle",
-            volume: 0.04,
-            pattern: [
-              [740, 0.03, 0.01],
-              [980, 0.06, 0.01]
-            ]
-          },
-          coin: {
-            wave: "square",
-            volume: 0.03,
-            pattern: [
-              [1046.5, 0.03, 0.01],
-              [1396.91, 0.05, 0.01]
-            ]
-          },
-          powerup: {
-            wave: "triangle",
-            volume: 0.034,
-            pattern: [
-              [523.25, 0.04, 0.01],
-              [783.99, 0.05, 0.01],
-              [1046.5, 0.08, 0.02]
-            ]
-          },
-          shield: {
-            wave: "sine",
-            volume: 0.036,
-            pattern: [
-              [392, 0.04, 0.01],
-              [587.33, 0.08, 0.01],
-              [440, 0.07, 0.01]
-            ]
-          },
-          collision: {
-            wave: "sawtooth",
-            volume: 0.032,
-            pattern: [
-              [220, 0.05, 0.01],
-              [164.81, 0.08, 0.01],
-              [130.81, 0.1, 0.02]
-            ]
-          },
-          gameover: {
-            wave: "triangle",
-            volume: 0.034,
-            pattern: [
-              [349.23, 0.08, 0.02],
-              [261.63, 0.1, 0.02],
-              [196, 0.16, 0.04]
-            ]
-          },
-          pause: {
-            wave: "sine",
-            volume: 0.03,
-            pattern: [
-              [392, 0.05, 0.01],
-              [329.63, 0.08, 0.01]
-            ]
-          },
-          resume: {
-            wave: "sine",
-            volume: 0.03,
-            pattern: [
-              [329.63, 0.05, 0.01],
-              [440, 0.08, 0.01]
-            ]
-          }
+    default: {
+      id: "default",
+      labelKey: "theme.default",
+      className: "theme-default",
+      assets: {
+        backgroundImage: `${ASSET_ROOT}/v1_default_game_bg.png`,
+        gameplayJet: `${ASSET_ROOT}/v1_default_gameplay_jet.png`,
+        gameplayJetFrame: null,
+        obstacles: buildObstacleList(),
+        icons: {
+          coin: `${ASSET_ROOT}/v1_default_game_icon_coin.png`,
+          coinGold: `${ASSET_ROOT}/v1_default_game_icon_coin_gold.png`,
+          coinSilver: `${ASSET_ROOT}/v1_default_game_icon_coin_silver.png`,
+          home: `${ASSET_ROOT}/v1_default_game_icon_home.png`,
+          level1: `${ASSET_ROOT}/v1_default_game_icon_level_1.png`,
+          level23: `${ASSET_ROOT}/v1_default_game_icon_level_2-3.png`,
+          level4: `${ASSET_ROOT}/v1_default_game_icon_level_4.png`,
+          level5: `${ASSET_ROOT}/v1_default_game_icon_level_5.png`,
+          pause: `${ASSET_ROOT}/v1_default_game_icon_pause.png`,
+          pilot: `${ASSET_ROOT}/v1_default_game_icon_pilot.png`,
+          points: `${ASSET_ROOT}/v1_default_game_icon_points.png`,
+          powerupMagnet: `${ASSET_ROOT}/v1_default_game_icon_powerup_magnet.png`,
+          powerupShield: `${ASSET_ROOT}/v1_default_game_icon_powerup_shield.png`,
+          powerupSlow: `${ASSET_ROOT}/v1_default_game_icon_powerup_slowmotion.png`,
+          resume: `${ASSET_ROOT}/v1_default_game_icon_resume.png`,
+          settings: `${ASSET_ROOT}/v1_default_game_icon_settings.png`,
+          stop: `${ASSET_ROOT}/v1_default_game_icon_stop.png`,
+          trophy: `${ASSET_ROOT}/v1_default_game_icon_trophy.png`
         }
-      }
-    },
-    "city-night": {
-      id: "city-night",
-      labelKey: "theme.cityNight",
-      className: "theme-city-night",
-      gameplay: {
-        skyStart: "#061529",
-        skyMid: "#102648",
-        skyEnd: "#23446d",
-        sunColor: "rgba(220, 235, 255, 0.18)",
-        cloud: "rgba(223, 236, 255, 0.28)",
-        cityBack: "#1b3152",
-        cityMid: "#17304d",
-        cityFront: "#11263d",
-        window: "rgba(255, 226, 126, 0.88)",
-        obstacleMain: "#16304d",
-        obstacleTop: "#214365",
-        planeBody: "#87f18f",
-        planeWing: "#e9f8ff",
-        planeAccent: "#79aaff",
-        trail: "rgba(155, 217, 255, 0.58)"
       },
-      audio: {
-        menu: {
-          wave: "sine",
-          volume: 0.04,
-          pattern: [
-            [349.23, 0.22, 0.04],
-            [440, 0.18, 0.04],
-            [523.25, 0.2, 0.06],
-            [440, 0.16, 0.04],
-            [392, 0.24, 0.2]
-          ]
-        },
-        gameplay: {
-          wave: "triangle",
-          volume: 0.032,
-          pattern: [
-            [261.63, 0.12, 0.02],
-            [329.63, 0.12, 0.02],
-            [392, 0.14, 0.04],
-            [329.63, 0.12, 0.02],
-            [440, 0.14, 0.06],
-            [392, 0.14, 0.04],
-            [349.23, 0.18, 0.18]
-          ]
-        },
-        button: {
-          wave: "square",
-          volume: 0.038,
-          pattern: [
-            [698.46, 0.05, 0.01],
-            [932.33, 0.06, 0.01]
-          ]
-        },
-        navigation: {
-          wave: "sine",
-          volume: 0.032,
-          pattern: [
-            [523.25, 0.05, 0.01],
-            [783.99, 0.08, 0.02]
-          ]
-        },
-        gameplaySfx: {
-          flap: {
-            wave: "sine",
-            volume: 0.035,
-            pattern: [
-              [622.25, 0.03, 0.01],
-              [830.61, 0.06, 0.01]
-            ]
-          },
-          coin: {
-            wave: "triangle",
-            volume: 0.03,
-            pattern: [
-              [987.77, 0.03, 0.01],
-              [1318.51, 0.05, 0.01]
-            ]
-          },
-          powerup: {
-            wave: "sine",
-            volume: 0.032,
-            pattern: [
-              [440, 0.04, 0.01],
-              [659.25, 0.05, 0.01],
-              [880, 0.08, 0.02]
-            ]
-          },
-          shield: {
-            wave: "triangle",
-            volume: 0.035,
-            pattern: [
-              [329.63, 0.04, 0.01],
-              [523.25, 0.08, 0.01],
-              [392, 0.08, 0.01]
-            ]
-          },
-          collision: {
-            wave: "sawtooth",
-            volume: 0.03,
-            pattern: [
-              [196, 0.05, 0.01],
-              [146.83, 0.08, 0.01],
-              [110, 0.1, 0.02]
-            ]
-          },
-          gameover: {
-            wave: "triangle",
-            volume: 0.032,
-            pattern: [
-              [293.66, 0.08, 0.02],
-              [220, 0.1, 0.02],
-              [164.81, 0.16, 0.04]
-            ]
-          },
-          pause: {
-            wave: "sine",
-            volume: 0.028,
-            pattern: [
-              [329.63, 0.05, 0.01],
-              [261.63, 0.08, 0.01]
-            ]
-          },
-          resume: {
-            wave: "sine",
-            volume: 0.028,
-            pattern: [
-              [261.63, 0.05, 0.01],
-              [392, 0.08, 0.01]
-            ]
-          }
-        }
-      }
+      gameplay: {
+        skyStart: "#102447",
+        skyMid: "#2c3f74",
+        skyEnd: "#ff9b60",
+        sunColor: "rgba(255, 224, 171, 0.9)",
+        cloud: "rgba(255, 214, 179, 0.32)",
+        cityBack: "#203965",
+        cityMid: "#182d54",
+        cityFront: "#0f2142",
+        window: "rgba(255, 174, 83, 0.9)",
+        obstacleMain: "#182744",
+        obstacleTop: "#ff8f4e",
+        planeBody: "#ff7a38",
+        planeWing: "#f5fbff",
+        planeAccent: "#12284d",
+        trail: "rgba(255, 193, 117, 0.72)",
+        haze: "rgba(255, 155, 96, 0.14)"
+      },
+      audio: DEFAULT_AUDIO
     }
   };
 
@@ -283,7 +166,7 @@ window.TurboWingsThemes = (() => {
   }
 
   function getThemeList() {
-    return Object.values(THEMES);
+    return [THEMES.default];
   }
 
   function applyTheme(themeId) {

@@ -14,112 +14,174 @@
     <link rel="stylesheet" href="./css/themes.css" />
     <link rel="stylesheet" href="./css/style.css" />
   </head>
-  <body class="theme-city-day">
+  <body class="theme-default">
     <div class="app-shell">
       <main class="screen screen-home active" id="homeScreen" data-screen="home">
-        <div class="scene scene-home" aria-hidden="true">
-          <div class="scene-sun"></div>
-          <div class="scene-cloud cloud-a"></div>
-          <div class="scene-cloud cloud-b"></div>
-          <div class="scene-cloud cloud-c"></div>
-          <div class="scene-air-trail"></div>
-          <div class="scene-buildings back"></div>
-          <div class="scene-buildings front"></div>
-        </div>
-
         <div class="home-layout">
-          <section class="hero-card hero-card-home panel">
-            <span class="eyebrow" data-i18n="home.eyebrow"></span>
-            <h1 class="hero-title" data-i18n="app.title"></h1>
-            <p class="hero-subtitle" data-i18n="home.subtitle"></p>
+          <label class="dev-display-mode panel" for="displayModeSelect">
+            <span>View</span>
+            <select id="displayModeSelect" aria-label="Display mode">
+              <option value="auto">Auto</option>
+              <option value="tablet">Tablet</option>
+              <option value="mobile">Mobile</option>
+              <option value="desktop">Desktop</option>
+            </select>
+          </label>
 
-            <div class="hero-actions hero-actions-home">
-              <button
-                class="button button-primary"
-                id="openSetupButton"
-                type="button"
-                data-i18n="home.newGame"
-              ></button>
-              <button
-                class="button button-secondary"
-                id="openLeaderboardButton"
-                type="button"
-                data-i18n="home.leaderboards"
-              ></button>
-              <button
-                class="button button-secondary"
-                id="openAchievementsButton"
-                type="button"
-                data-i18n="home.achievements"
-              ></button>
-              <button
-                class="button button-secondary"
-                id="openSettingsButton"
-                type="button"
-                data-i18n="home.settings"
-              ></button>
+          <header class="home-topbar">
+            <article class="topbar-pilot panel">
+              <div class="topbar-pilot-icon" aria-hidden="true"></div>
+              <div class="topbar-pilot-copy">
+                <strong id="homeTopPilotName">Player 1</strong>
+                <div class="topbar-pilot-meta">
+                  <span data-i18n="home.pilotProfile"></span>
+                  <span class="topbar-level-badge" id="homePlayerLevelValue">FL 1</span>
+                </div>
+              </div>
+            </article>
+
+            <div class="home-status-strip panel">
+              <article class="status-chip">
+                <span class="status-chip-icon status-icon-music" aria-hidden="true"></span>
+                <div>
+                  <span class="status-chip-label" data-i18n="settings.music"></span>
+                  <strong id="homeMusicStatusValue">ON</strong>
+                </div>
+              </article>
+              <article class="status-chip">
+                <span class="status-chip-icon status-icon-sfx" aria-hidden="true"></span>
+                <div>
+                  <span class="status-chip-label" data-i18n="settings.sfx"></span>
+                  <strong id="homeSfxStatusValue">ON</strong>
+                </div>
+              </article>
+              <article class="status-chip">
+                <span class="status-chip-icon status-icon-theme" aria-hidden="true"></span>
+                <div>
+                  <span class="status-chip-label" data-i18n="settings.theme"></span>
+                  <strong id="homeThemeValue">Default</strong>
+                </div>
+              </article>
+              <article class="status-chip">
+                <span class="status-chip-icon status-icon-level" aria-hidden="true"></span>
+                <div>
+                  <span class="status-chip-label" data-i18n="setup.selectDifficulty"></span>
+                  <strong id="homeDifficultyValue">2 - Normal</strong>
+                </div>
+              </article>
+              <article class="status-chip">
+                <span class="status-chip-icon status-icon-controls" aria-hidden="true"></span>
+                <div>
+                  <span class="status-chip-label" data-i18n="home.controls"></span>
+                  <strong data-i18n="home.controlsValue"></strong>
+                </div>
+              </article>
             </div>
-          </section>
 
-          <section class="dashboard-grid">
-            <article class="home-panel panel">
-              <div class="panel-heading">
-                <span class="mini-label" data-i18n="home.pilotProfile"></span>
-                <strong class="summary-value" id="homeProfileName">Player 1</strong>
-                <p class="helper-text" id="homeProfileMeta"></p>
+            <aside class="home-utility-rail">
+              <div class="coin-bank-chip panel">
+                <span class="coin-bank-icon" aria-hidden="true"></span>
+                <strong id="homeTopCoinsValue">0</strong>
+              </div>
+            </aside>
+          </header>
+
+          <section class="home-hero-grid">
+            <section class="hero-card hero-card-home home-brand-panel">
+              <div class="home-brand-lockup" aria-hidden="true">
+                <img
+                  src="./assets/images/v1_default_logo.png"
+                  class="hero-logo-img"
+                  alt="Turbo Wings"
+                />
+                <img
+                  src="./assets/images/v1_default_HomeJet.png"
+                  class="home-brand-jet"
+                  alt=""
+                />
+              </div>
+              <p class="hero-subtitle" data-i18n="home.subtitle"></p>
+
+              <div class="hero-actions hero-actions-full">
+                <button
+                  class="button button-primary button-launch"
+                  id="openSetupButton"
+                  type="button"
+                  data-i18n="home.newGame"
+                ></button>
+              </div>
+
+              <div class="hero-actions hero-actions-full hero-actions-secondary">
+                <button
+                  class="button button-secondary"
+                  id="openLeaderboardButton"
+                  type="button"
+                  data-i18n="home.leaderboards"
+                ></button>
+                <button
+                  class="button button-secondary"
+                  id="openAchievementsButton"
+                  type="button"
+                  data-i18n="home.achievements"
+                ></button>
+                <button
+                  class="button button-secondary"
+                  id="openSettingsButton"
+                  type="button"
+                  data-i18n="home.settings"
+                ></button>
+              </div>
+            </section>
+
+            <aside class="home-profile-card panel">
+              <div class="home-profile-head">
+                <span class="panel-gold-title" data-i18n="home.pilotProfile"></span>
+                <div class="home-profile-ident">
+                  <div class="profile-emblem" aria-hidden="true"></div>
+                  <div class="home-profile-copy">
+                    <strong class="summary-value" id="homeProfileName">Player 1</strong>
+                    <p class="helper-text" id="homeProfileMeta"></p>
+                  </div>
+                </div>
               </div>
 
               <div class="hero-stats home-stats">
-                <article class="stat-card">
+                <article class="stat-card stat-card-points">
                   <span class="stat-label" data-i18n="home.bestScore"></span>
                   <strong class="stat-value" id="homeBestScoreValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-coins">
                   <span class="stat-label" data-i18n="home.totalCoins"></span>
                   <strong class="stat-value compact" id="homeTotalCoinsValue">0</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-flight">
                   <span class="stat-label" data-i18n="home.highestFlightLevel"></span>
                   <strong class="stat-value compact" id="homeHighestFlightValue">FL 1</strong>
                 </article>
-                <article class="stat-card">
+                <article class="stat-card stat-card-runs">
                   <span class="stat-label" data-i18n="home.totalRuns"></span>
                   <strong class="stat-value compact" id="homeRunsValue">0</strong>
                 </article>
               </div>
 
-              <div class="home-mini-stats">
-                <span class="mini-pill">
-                  <strong data-i18n="home.topPilot"></strong>
-                  <span id="homeTopPilotValue">--</span>
-                </span>
-                <span class="mini-pill">
-                  <strong data-i18n="home.unlockedLevels"></strong>
-                  <span id="homeUnlockedValue">3 / 5</span>
-                </span>
-                <span class="mini-pill">
-                  <strong data-i18n="home.controls"></strong>
-                  <span data-i18n="home.controlsValue"></span>
-                </span>
+              <div class="home-mini-stats" hidden>
+                <span id="homeTopPilotValue" hidden></span>
+                <span id="homeUnlockedValue" hidden></span>
               </div>
-            </article>
+            </aside>
+          </section>
 
-            <article class="home-panel panel">
+          <section class="home-bottom-grid">
+            <article class="home-panel panel home-missions-panel">
               <div class="panel-heading">
-                <span class="mini-label" data-i18n="home.activeMissions"></span>
-                <h2 data-i18n="home.activeMissionsTitle"></h2>
-                <p class="helper-text" data-i18n="home.activeMissionsHint"></p>
+                <span class="panel-gold-title" data-i18n="home.activeMissions"></span>
               </div>
               <div class="mission-list" id="homeMissionsList"></div>
             </article>
 
-            <article class="home-panel panel">
+            <article class="home-panel panel home-achievements-panel">
               <div class="panel-heading panel-heading-actions">
-                <div>
-                  <span class="mini-label" data-i18n="home.recentAchievements"></span>
-                  <h2 data-i18n="home.recentAchievementsTitle"></h2>
-                  <p class="helper-text" data-i18n="home.recentAchievementsHint"></p>
-                </div>
+                <span class="panel-gold-title" data-i18n="home.recentAchievements"></span>
                 <button
                   class="button button-secondary button-compact"
                   id="openAchievementsPanelButton"
@@ -130,6 +192,7 @@
               <div class="achievement-mini-list" id="homeRecentAchievementsList"></div>
             </article>
           </section>
+
         </div>
       </main>
 
@@ -142,7 +205,7 @@
           <div class="scene-buildings front"></div>
         </div>
 
-        <section class="panel-shell panel">
+        <section class="panel-shell panel setup-shell">
           <div class="screen-titlebar">
             <div class="section-heading">
               <span class="eyebrow" data-i18n="setup.eyebrow"></span>
@@ -158,9 +221,50 @@
           </div>
 
           <div class="content-grid setup-grid">
-            <div class="form-card">
-              <label class="control-field" for="playerNameInput">
-                <span data-i18n="setup.playerName"></span>
+            <div class="setup-main-column">
+              <article class="setup-feature-card panel">
+                <div class="setup-feature-copy">
+                  <span class="mini-label setup-feature-label" data-i18n="setup.featuredShip"></span>
+                  <strong class="setup-feature-name">Turbo Hawk X7</strong>
+                  <span class="setup-feature-class" data-i18n="setup.shipClassBalanced"></span>
+                  <p class="helper-text" data-i18n="setup.featuredShipHint"></p>
+                  <div class="setup-feature-bars" aria-hidden="true">
+                    <div class="setup-feature-bar">
+                      <span data-i18n="settings.levelSpeed"></span>
+                      <i><b style="width: 62%"></b></i>
+                    </div>
+                    <div class="setup-feature-bar">
+                      <span data-i18n="setup.handling"></span>
+                      <i><b style="width: 48%"></b></i>
+                    </div>
+                    <div class="setup-feature-bar">
+                      <span data-i18n="setup.durability"></span>
+                      <i><b style="width: 70%"></b></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="setup-feature-art" aria-hidden="true">
+                  <img
+                    src="./assets/images/v1_default_gameplay_jet.png"
+                    class="setup-feature-jet"
+                    alt=""
+                  />
+                </div>
+              </article>
+
+              <section class="setup-route-card panel">
+                <div class="setup-route-head">
+                  <strong data-i18n="setup.selectDifficulty"></strong>
+                  <p class="helper-text" data-i18n="setup.difficultyHint"></p>
+                </div>
+                <div class="difficulty-grid" id="difficultyList"></div>
+              </section>
+            </div>
+
+            <aside class="summary-card panel setup-briefing-card">
+              <label class="setup-pilot-card panel control-field" for="playerNameInput">
+                <span class="setup-pilot-icon" aria-hidden="true"></span>
+                <span class="setup-pilot-label" data-i18n="setup.playerName"></span>
                 <input
                   class="text-input"
                   id="playerNameInput"
@@ -170,18 +274,57 @@
                 />
               </label>
 
-              <div class="section-subhead">
-                <strong data-i18n="setup.selectDifficulty"></strong>
-                <p class="helper-text" data-i18n="setup.difficultyHint"></p>
+              <div class="setup-briefing-head">
+                <span class="eyebrow" data-i18n="setup.briefing"></span>
+                <strong class="setup-briefing-title" data-i18n="setup.launchStatus"></strong>
               </div>
 
-              <div class="difficulty-grid" id="difficultyList"></div>
-            </div>
+              <div class="setup-briefing-stack">
+                <article class="setup-brief-item">
+                  <span class="setup-brief-icon setup-brief-icon-pilot" aria-hidden="true"></span>
+                  <div>
+                    <span class="stat-label" data-i18n="setup.playerName"></span>
+                    <strong class="summary-value" id="setupBriefPilotValue"></strong>
+                  </div>
+                </article>
 
-            <aside class="summary-card panel">
-              <span class="mini-label" data-i18n="setup.lastLoadout"></span>
-              <strong class="summary-value" id="setupSummaryValue"></strong>
-              <p class="helper-text" id="setupStatusText"></p>
+                <article class="setup-brief-item">
+                  <span class="setup-brief-icon setup-brief-icon-ship" aria-hidden="true"></span>
+                  <div>
+                    <span class="stat-label" data-i18n="setup.ship"></span>
+                    <strong class="summary-value" id="setupBriefShipValue">Turbo Hawk X7</strong>
+                  </div>
+                </article>
+
+                <article class="setup-brief-item">
+                  <span class="setup-brief-icon setup-brief-icon-difficulty" aria-hidden="true"></span>
+                  <div>
+                    <span class="stat-label" data-i18n="setup.selectDifficulty"></span>
+                    <strong class="summary-value" id="setupBriefDifficultyValue"></strong>
+                    <p class="helper-text" id="setupStatusText"></p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="setup-readiness-card">
+                <div class="setup-readiness-copy">
+                  <span class="stat-label" data-i18n="setup.routeReadiness"></span>
+                  <strong id="setupReadinessValue" data-i18n="setup.readyForTakeoff"></strong>
+                </div>
+                <div class="setup-readiness-meter" id="setupReadinessMeter" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="setup-brief-summary">
+                <span class="mini-label" data-i18n="setup.lastLoadout"></span>
+                <strong class="summary-value" id="setupSummaryValue"></strong>
+              </div>
+
               <button
                 class="button button-primary"
                 id="startFlightButton"
@@ -202,7 +345,7 @@
           <div class="scene-buildings front"></div>
         </div>
 
-        <section class="panel-shell panel">
+        <section class="panel-shell panel settings-shell">
           <div class="screen-titlebar">
             <div class="section-heading">
               <span class="eyebrow" data-i18n="settings.eyebrow"></span>
@@ -219,6 +362,10 @@
 
           <div class="content-grid settings-grid">
             <div class="form-card">
+              <div class="settings-section-head">
+                <strong data-i18n="settings.sectionAppearance"></strong>
+              </div>
+
               <label class="control-field" for="languageSelect">
                 <span data-i18n="settings.language"></span>
                 <select id="languageSelect" class="select-input"></select>
@@ -228,6 +375,12 @@
                 <span data-i18n="settings.theme"></span>
                 <select id="themeSelect" class="select-input"></select>
               </label>
+            </div>
+
+            <div class="form-card">
+              <div class="settings-section-head">
+                <strong data-i18n="settings.sectionAudio"></strong>
+              </div>
 
               <div class="toggle-stack">
                 <label class="toggle-card" for="musicToggle">
@@ -256,16 +409,15 @@
                   <input id="gameplayAudioToggle" class="toggle-input" type="checkbox" />
                   <span class="toggle-visual"></span>
                 </label>
+              </div>
+            </div>
 
-                <label class="toggle-card" for="obstaclesToggle">
-                  <div>
-                    <strong data-i18n="settings.obstacles"></strong>
-                    <p class="helper-text" data-i18n="settings.obstaclesHint"></p>
-                  </div>
-                  <input id="obstaclesToggle" class="toggle-input" type="checkbox" />
-                  <span class="toggle-visual"></span>
-                </label>
+            <div class="form-card">
+              <div class="settings-section-head">
+                <strong data-i18n="settings.sectionGameplay"></strong>
+              </div>
 
+              <div class="toggle-stack">
                 <label class="toggle-card" for="powerUpsToggle">
                   <div>
                     <strong data-i18n="settings.powerUps"></strong>
@@ -293,21 +445,39 @@
                   <span class="toggle-visual"></span>
                 </label>
               </div>
-            </div>
 
-            <div class="form-card">
-              <div class="section-subhead">
-                <strong data-i18n="settings.advancedTitle"></strong>
-                <p class="helper-text" data-i18n="settings.advancedHint"></p>
+              <div class="settings-advanced-row">
+                <div class="section-subhead">
+                  <strong data-i18n="settings.advancedTitle"></strong>
+                  <p class="helper-text" data-i18n="settings.advancedHint"></p>
+                </div>
+                <button
+                  class="button button-secondary"
+                  id="openAdvancedSettingsButton"
+                  type="button"
+                  data-i18n="settings.openAdvanced"
+                ></button>
               </div>
-              <button
-                class="button button-secondary"
-                id="openAdvancedSettingsButton"
-                type="button"
-                data-i18n="settings.openAdvanced"
-              ></button>
             </div>
           </div>
+
+          <section class="settings-tuning-panel panel">
+            <div class="settings-tuning-head">
+              <div class="settings-section-head settings-section-head-inline">
+                <strong data-i18n="settings.gameplayTuning"></strong>
+                <p class="helper-text" data-i18n="settings.tuningHint"></p>
+              </div>
+              <button
+                class="button button-secondary button-compact"
+                id="settingsResetDifficultySettingsButton"
+                type="button"
+                data-i18n="settings.restoreDefaults"
+              ></button>
+            </div>
+
+            <div class="tuning-list settings-tuning-list" id="settingsDifficultySettingsList"></div>
+          </section>
+
         </section>
       </section>
 
@@ -371,7 +541,7 @@
           <div class="scene-buildings front"></div>
         </div>
 
-        <section class="panel-shell panel">
+        <section class="panel-shell panel achievements-shell">
           <div class="screen-titlebar">
             <div class="section-heading">
               <span class="eyebrow" data-i18n="achievements.eyebrow"></span>
@@ -386,22 +556,87 @@
             ></button>
           </div>
 
-          <div class="achievement-screen-summary">
-            <article class="stat-card">
-              <span class="stat-label" data-i18n="achievements.unlockedCount"></span>
-              <strong class="stat-value compact" id="achievementsUnlockedValue">0 / 10</strong>
+          <div class="achievements-overview">
+            <article class="achievements-metric-card">
+              <span class="achievements-metric-icon achievements-metric-icon-unlocked" aria-hidden="true"></span>
+              <div class="achievements-metric-copy">
+                <span class="stat-label" data-i18n="achievements.unlockedCount"></span>
+                <strong class="stat-value compact" id="achievementsUnlockedValue">0 / 10</strong>
+                <p class="helper-text" data-i18n="achievements.achievementsEarned"></p>
+              </div>
             </article>
-            <article class="stat-card">
-              <span class="stat-label" data-i18n="achievements.totalRewardedCoins"></span>
-              <strong class="stat-value compact" id="achievementsRewardedCoinsValue">0</strong>
+
+            <article class="achievements-metric-card">
+              <span class="achievements-metric-icon achievements-metric-icon-total" aria-hidden="true"></span>
+              <div class="achievements-metric-copy">
+                <span class="stat-label" data-i18n="achievements.totalAchievements"></span>
+                <strong class="stat-value compact" id="achievementsTotalValue">10</strong>
+                <p class="helper-text" data-i18n="achievements.acrossAllCategories"></p>
+              </div>
+            </article>
+
+            <article class="achievements-metric-card">
+              <span class="achievements-metric-icon achievements-metric-icon-coins" aria-hidden="true"></span>
+              <div class="achievements-metric-copy">
+                <span class="stat-label" data-i18n="achievements.totalRewardedCoins"></span>
+                <strong class="stat-value compact" id="achievementsRewardedCoinsValue">0</strong>
+                <p class="helper-text" data-i18n="achievements.totalCoinsEarned"></p>
+              </div>
+            </article>
+
+            <article class="achievements-mastery-card">
+              <div class="achievements-mastery-ring">
+                <span id="achievementsMasteryValue">0%</span>
+              </div>
+              <div class="achievements-mastery-copy">
+                <span class="stat-label" data-i18n="achievements.overallMastery"></span>
+                <strong id="achievementsMasteryMeta" data-i18n="achievements.keepGoing"></strong>
+                <div class="achievements-mastery-track">
+                  <span id="achievementsMasteryBar"></span>
+                </div>
+                <p class="helper-text" data-i18n="achievements.keepGoing"></p>
+              </div>
             </article>
           </div>
 
-          <div class="achievement-list" id="achievementsList"></div>
+          <div class="achievements-layout">
+            <aside class="achievements-sidebar">
+              <div class="achievements-sidebar-head">
+                <strong data-i18n="achievements.categories"></strong>
+              </div>
+
+              <div class="achievements-category-list" id="achievementsCategoryList"></div>
+
+              <div class="achievements-side-action">
+                <span class="achievements-side-action-icon" aria-hidden="true"></span>
+                <strong data-i18n="achievements.recentlyUnlocked"></strong>
+              </div>
+            </aside>
+
+            <div class="achievements-main">
+              <section class="achievements-section achievements-featured-section">
+                <div class="achievements-section-head">
+                  <strong data-i18n="achievements.featuredAchievements"></strong>
+                </div>
+                <div class="achievements-featured-grid" id="achievementsFeaturedList"></div>
+              </section>
+
+              <section class="achievements-section achievements-library-section">
+                <div class="achievements-section-head achievements-section-head-inline">
+                  <strong data-i18n="achievements.allAchievementsSection"></strong>
+                  <div class="achievements-sort-pill">
+                    <span data-i18n="achievements.sortBy"></span>
+                    <strong data-i18n="achievements.defaultSort"></strong>
+                  </div>
+                </div>
+                <div class="achievement-list achievements-library-grid" id="achievementsList"></div>
+              </section>
+            </div>
+          </div>
         </section>
       </section>
 
-      <section class="screen screen-panel" id="leaderboardScreen" data-screen="leaderboard" hidden>
+      <section class="screen screen-panel leaderboard-screen" id="leaderboardScreen" data-screen="leaderboard" hidden>
         <div class="scene scene-alt" aria-hidden="true">
           <div class="scene-sun"></div>
           <div class="scene-cloud cloud-b"></div>
@@ -410,36 +645,109 @@
           <div class="scene-buildings front"></div>
         </div>
 
-        <section class="panel-shell panel">
-          <div class="screen-titlebar">
-            <div class="section-heading">
-              <span class="eyebrow" data-i18n="leaderboard.eyebrow"></span>
-              <h2 data-i18n="leaderboard.title"></h2>
-              <p data-i18n="leaderboard.subtitle"></p>
-            </div>
-            <button
-              class="button button-secondary button-compact"
-              id="backFromLeaderboardButton"
-              type="button"
-              data-i18n="leaderboard.back"
-            ></button>
-          </div>
+        <section class="panel-shell panel leaderboard-shell">
+          <div class="leaderboard-layout">
+            <aside class="leaderboard-side-rail panel">
+              <div class="leaderboard-side-brand">
+                <img
+                  src="./assets/images/v1_default_logo.png"
+                  class="leaderboard-side-logo"
+                  alt="Turbo Wings"
+                  aria-hidden="true"
+                />
+              </div>
 
-          <div class="leaderboard-card">
-            <div class="leaderboard-head">
-              <span data-i18n="leaderboard.rank"></span>
-              <span data-i18n="leaderboard.player"></span>
-              <span data-i18n="leaderboard.score"></span>
-              <span data-i18n="leaderboard.difficulty"></span>
-              <span data-i18n="leaderboard.date"></span>
+              <div class="leaderboard-side-nav">
+                <button class="leaderboard-side-button" id="leaderboardToSetupButton" type="button">
+                  <span class="leaderboard-side-button-icon leaderboard-side-icon-setup" aria-hidden="true"></span>
+                  <span data-i18n="setup.eyebrow"></span>
+                </button>
+                <button
+                  class="leaderboard-side-button"
+                  id="leaderboardToAchievementsButton"
+                  type="button"
+                >
+                  <span
+                    class="leaderboard-side-button-icon leaderboard-side-icon-achievements"
+                    aria-hidden="true"
+                  ></span>
+                  <span data-i18n="achievements.eyebrow"></span>
+                </button>
+                <button class="leaderboard-side-button is-active" type="button">
+                  <span
+                    class="leaderboard-side-button-icon leaderboard-side-icon-leaderboard"
+                    aria-hidden="true"
+                  ></span>
+                  <span data-i18n="leaderboard.title"></span>
+                </button>
+                <button class="leaderboard-side-button" id="leaderboardToSettingsButton" type="button">
+                  <span class="leaderboard-side-button-icon leaderboard-side-icon-settings" aria-hidden="true"></span>
+                  <span data-i18n="settings.title"></span>
+                </button>
+              </div>
+            </aside>
+
+            <div class="leaderboard-main">
+              <div class="screen-titlebar">
+                <div class="section-heading">
+                  <span class="eyebrow" data-i18n="leaderboard.eyebrow"></span>
+                  <h2 data-i18n="leaderboard.title"></h2>
+                  <p data-i18n="leaderboard.subtitle"></p>
+                </div>
+                <button
+                  class="button button-secondary button-compact"
+                  id="backFromLeaderboardButton"
+                  type="button"
+                  data-i18n="leaderboard.back"
+                ></button>
+              </div>
+
+              <div class="leaderboard-summary" id="leaderboardSummary">
+                <article class="stat-card stat-card-points">
+                  <span class="stat-label" data-i18n="leaderboard.topScore"></span>
+                  <strong class="stat-value compact" id="lbTopScoreValue">—</strong>
+                </article>
+                <article class="stat-card stat-card-runs">
+                  <span class="stat-label" data-i18n="leaderboard.topPilotLabel"></span>
+                  <strong class="stat-value compact" id="lbTopPilotValue">—</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="leaderboard.totalEntries"></span>
+                  <strong class="stat-value compact" id="lbTotalEntriesValue">—</strong>
+                </article>
+                <article class="stat-card stat-card-flight">
+                  <span class="stat-label" data-i18n="leaderboard.bestRoute"></span>
+                  <strong class="stat-value compact" id="lbBestRouteValue">—</strong>
+                </article>
+              </div>
+
+              <div class="leaderboard-podium" id="leaderboardPodium"></div>
+
+              <div class="leaderboard-card">
+                <div class="leaderboard-head">
+                  <span data-i18n="leaderboard.rank"></span>
+                  <span data-i18n="leaderboard.player"></span>
+                  <span data-i18n="leaderboard.score"></span>
+                  <span data-i18n="leaderboard.difficulty"></span>
+                  <span data-i18n="leaderboard.date"></span>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList"></div>
+              </div>
             </div>
-            <div class="leaderboard-list" id="leaderboardList"></div>
           </div>
         </section>
       </section>
 
       <section class="screen screen-game" id="gameScreen" data-screen="game" hidden>
         <canvas id="gameCanvas" aria-label="Turbo Wings game canvas"></canvas>
+
+        <label class="dev-collision-mode panel" for="collisionDebugSelect">
+          <span>Contato</span>
+          <select id="collisionDebugSelect" aria-label="Collision debug">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+          </select>
+        </label>
 
         <div class="game-hud">
           <div class="hud-group">
@@ -508,76 +816,91 @@
           </div>
 
           <div class="overlay-card hidden overlay-card-game-over" id="gameOverOverlay">
-            <span class="eyebrow" data-i18n="game.gameOverEyebrow"></span>
-            <h2 data-i18n="game.gameOver"></h2>
-            <p class="overlay-note" id="gameOverMeta"></p>
-            <p class="overlay-note overlay-note-accent hidden" id="unlockNotice"></p>
-
-            <div class="game-over-stats">
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.finalScore"></span>
-                <strong class="stat-value" id="finalScoreValue">0</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.bestScore"></span>
-                <strong class="stat-value" id="bestScoreValue">0</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.collectedCoins"></span>
-                <strong class="stat-value" id="finalCoinsValue">0</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.totalCoins"></span>
-                <strong class="stat-value compact" id="gameOverTotalCoinsValue">0</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.timeSurvived"></span>
-                <strong class="stat-value compact" id="gameOverTimeValue">0s</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.flightLevelReached"></span>
-                <strong class="stat-value compact" id="gameOverFlightLevelValue">FL 1</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.powerUpsCollected"></span>
-                <strong class="stat-value compact" id="gameOverPowerUpsValue">0</strong>
-              </article>
-              <article class="stat-card">
-                <span class="stat-label" data-i18n="game.obstaclesPassed"></span>
-                <strong class="stat-value compact" id="gameOverObstaclesValue">0</strong>
-              </article>
-            </div>
-
-            <div class="game-over-columns">
-              <div class="summary-block">
-                <strong data-i18n="game.missionsCompleted"></strong>
-                <div class="summary-list" id="gameOverMissionsList"></div>
+            <div class="game-over-report">
+              <div class="game-over-report-head">
+                <span class="eyebrow" data-i18n="game.gameOverEyebrow"></span>
+                <h2 data-i18n="game.gameOver"></h2>
+                <p class="overlay-note" id="gameOverMeta"></p>
+                <p class="overlay-note overlay-note-accent hidden" id="unlockNotice"></p>
               </div>
-              <div class="summary-block">
-                <strong data-i18n="game.achievementsUnlocked"></strong>
-                <div class="summary-list" id="gameOverAchievementsList"></div>
-              </div>
-            </div>
 
-            <div class="hero-actions">
-              <button
-                class="button button-primary"
-                id="restartButton"
-                type="button"
-                data-i18n="game.playAgain"
-              ></button>
-              <button
-                class="button button-secondary"
-                id="changeSetupButton"
-                type="button"
-                data-i18n="game.changeSetup"
-              ></button>
-              <button
-                class="button button-secondary"
-                id="gameOverHomeButton"
-                type="button"
-                data-i18n="game.home"
-              ></button>
+              <div class="game-over-stats">
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.finalScore"></span>
+                  <strong class="stat-value" id="finalScoreValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.bestScore"></span>
+                  <strong class="stat-value" id="bestScoreValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.collectedCoins"></span>
+                  <strong class="stat-value" id="finalCoinsValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.totalCoins"></span>
+                  <strong class="stat-value compact" id="gameOverTotalCoinsValue">0</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.timeSurvived"></span>
+                  <strong class="stat-value compact" id="gameOverTimeValue">0s</strong>
+                </article>
+                <article class="stat-card">
+                  <span class="stat-label" data-i18n="game.flightLevelReached"></span>
+                  <strong class="stat-value compact" id="gameOverFlightLevelValue">FL 1</strong>
+                </article>
+              </div>
+
+              <div class="game-over-wide-metrics">
+                <article class="summary-block">
+                  <span class="stat-label" data-i18n="game.powerUpsCollected"></span>
+                  <strong class="summary-value" id="gameOverPowerUpsValue">0</strong>
+                </article>
+                <article class="summary-block">
+                  <span class="stat-label" data-i18n="game.obstaclesPassed"></span>
+                  <strong class="summary-value" id="gameOverObstaclesValue">0</strong>
+                </article>
+                <article class="summary-block">
+                  <span class="stat-label" data-i18n="game.missionsCompleted"></span>
+                  <strong class="summary-value" id="gameOverMissionsCountValue">0</strong>
+                </article>
+                <article class="summary-block">
+                  <span class="stat-label" data-i18n="game.achievementsUnlocked"></span>
+                  <strong class="summary-value" id="gameOverAchievementsCountValue">0</strong>
+                </article>
+              </div>
+
+              <div class="game-over-columns">
+                <div class="summary-block">
+                  <strong data-i18n="game.missionsCompleted"></strong>
+                  <div class="summary-list" id="gameOverMissionsList"></div>
+                </div>
+                <div class="summary-block">
+                  <strong data-i18n="game.achievementsUnlocked"></strong>
+                  <div class="summary-list" id="gameOverAchievementsList"></div>
+                </div>
+              </div>
+
+              <div class="hero-actions game-over-actions">
+                <button
+                  class="button button-primary"
+                  id="restartButton"
+                  type="button"
+                  data-i18n="game.playAgain"
+                ></button>
+                <button
+                  class="button button-secondary"
+                  id="changeSetupButton"
+                  type="button"
+                  data-i18n="game.changeSetup"
+                ></button>
+                <button
+                  class="button button-secondary"
+                  id="gameOverHomeButton"
+                  type="button"
+                  data-i18n="game.home"
+                ></button>
+              </div>
             </div>
           </div>
         </div>

@@ -183,7 +183,7 @@ window.TurboWingsMissions = (() => {
       case "run_magnet_coins":
         return runSummary.coinsCollectedWithMagnet;
       case "run_night_theme":
-        return runSummary.themeUsed === "city-night" ? 1 : 0;
+        return runSummary.themeUsed === "default" ? 1 : 0;
       default:
         return 0;
     }

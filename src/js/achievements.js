@@ -2,60 +2,89 @@ window.TurboWingsAchievements = (() => {
   const ACHIEVEMENT_TEMPLATES = [
     {
       id: "first-flight",
+      categoryId: "first-flight",
+      statKey: "totalRuns",
+      targetValue: 1,
       titleKey: "achievement.firstFlight.title",
       descriptionKey: "achievement.firstFlight.description",
       reward: 20
     },
     {
       id: "urban-pilot",
+      categoryId: "first-flight",
+      statKey: "highScore",
+      targetValue: 25,
       titleKey: "achievement.urbanPilot.title",
       descriptionKey: "achievement.urbanPilot.description",
       reward: 30
     },
     {
       id: "sky-ace",
+      categoryId: "skill-mastery",
+      statKey: "highScore",
+      targetValue: 50,
       titleKey: "achievement.skyAce.title",
       descriptionKey: "achievement.skyAce.description",
       reward: 45
     },
     {
       id: "sky-master",
+      categoryId: "skill-mastery",
+      statKey: "highScore",
+      targetValue: 100,
       titleKey: "achievement.skyMaster.title",
       descriptionKey: "achievement.skyMaster.description",
       reward: 80
     },
     {
       id: "coin-hunter",
+      categoryId: "collection",
+      statKey: "totalCoinsCollected",
+      targetValue: 100,
       titleKey: "achievement.coinHunter.title",
       descriptionKey: "achievement.coinHunter.description",
       reward: 35
     },
     {
       id: "magnetic",
+      categoryId: "collection",
+      statKey: "totalMagnetCoins",
+      targetValue: 25,
       titleKey: "achievement.magnetic.title",
       descriptionKey: "achievement.magnetic.description",
       reward: 40
     },
     {
       id: "perfect-shield",
+      categoryId: "flight-challenges",
+      statKey: "totalShieldSaves",
+      targetValue: 10,
       titleKey: "achievement.perfectShield.title",
       descriptionKey: "achievement.perfectShield.description",
       reward: 60
     },
     {
       id: "survivor",
+      categoryId: "flight-challenges",
+      statKey: "longestSurvivalTime",
+      targetValue: 90,
       titleKey: "achievement.survivor.title",
       descriptionKey: "achievement.survivor.description",
       reward: 55
     },
     {
       id: "night-explorer",
+      categoryId: "hidden",
+      targetValue: 1,
       titleKey: "achievement.nightExplorer.title",
       descriptionKey: "achievement.nightExplorer.description",
       reward: 30
     },
     {
       id: "persistent",
+      categoryId: "skill-mastery",
+      statKey: "totalRuns",
+      targetValue: 25,
       titleKey: "achievement.persistent.title",
       descriptionKey: "achievement.persistent.description",
       reward: 75
@@ -115,7 +144,7 @@ window.TurboWingsAchievements = (() => {
       case "survivor":
         return runSummary.timeSurvived >= 90 || statsAfter.longestSurvivalTime >= 90;
       case "night-explorer":
-        return runSummary.themeUsed === "city-night";
+        return runSummary.themeUsed === "default";
       case "persistent":
         return statsAfter.totalRuns >= 25;
       default:

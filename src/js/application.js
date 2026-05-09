@@ -30,6 +30,40 @@ window.TurboWingsApplication = (() => {
     tuning: DEFAULT_TUNING
   };
 
+  const FEATURED_ACHIEVEMENT_IDS = ["first-flight", "urban-pilot", "sky-ace", "sky-master"];
+  const ACHIEVEMENT_CATEGORIES = [
+    {
+      id: "all",
+      labelKey: "achievements.allAchievementsCategory",
+      iconClass: "achievements-category-icon-all"
+    },
+    {
+      id: "first-flight",
+      labelKey: "achievements.categoryFirstFlight",
+      iconClass: "achievements-category-icon-first-flight"
+    },
+    {
+      id: "skill-mastery",
+      labelKey: "achievements.categorySkillMastery",
+      iconClass: "achievements-category-icon-skill-mastery"
+    },
+    {
+      id: "flight-challenges",
+      labelKey: "achievements.categoryFlightChallenges",
+      iconClass: "achievements-category-icon-flight-challenges"
+    },
+    {
+      id: "collection",
+      labelKey: "achievements.categoryCollection",
+      iconClass: "achievements-category-icon-collection"
+    },
+    {
+      id: "hidden",
+      labelKey: "achievements.categoryHidden",
+      iconClass: "achievements-category-icon-hidden"
+    }
+  ];
+
   class TurboWingsApp {
     constructor() {
       this.difficulties = getDifficultyDefinitions();
@@ -90,12 +124,34 @@ window.TurboWingsApplication = (() => {
         coinsToggle: document.getElementById("coinsToggle"),
         effectsToggle: document.getElementById("effectsToggle"),
         difficultySettingsList: document.getElementById("difficultySettingsList"),
+        settingsDifficultySettingsList: document.getElementById("settingsDifficultySettingsList"),
         resetDifficultySettingsButton: document.getElementById("resetDifficultySettingsButton"),
+        settingsResetDifficultySettingsButton: document.getElementById(
+          "settingsResetDifficultySettingsButton"
+        ),
         difficultyList: document.getElementById("difficultyList"),
         playerNameInput: document.getElementById("playerNameInput"),
         setupSummaryValue: document.getElementById("setupSummaryValue"),
+        setupBriefPilotValue: document.getElementById("setupBriefPilotValue"),
+        setupBriefShipValue: document.getElementById("setupBriefShipValue"),
+        setupBriefDifficultyValue: document.getElementById("setupBriefDifficultyValue"),
+        setupReadinessValue: document.getElementById("setupReadinessValue"),
+        setupReadinessMeter: document.getElementById("setupReadinessMeter"),
         setupStatusText: document.getElementById("setupStatusText"),
         leaderboardList: document.getElementById("leaderboardList"),
+        leaderboardPodium: document.getElementById("leaderboardPodium"),
+        leaderboardToSetupButton: document.getElementById("leaderboardToSetupButton"),
+        leaderboardToAchievementsButton: document.getElementById(
+          "leaderboardToAchievementsButton"
+        ),
+        leaderboardToSettingsButton: document.getElementById("leaderboardToSettingsButton"),
+        homeTopPilotName: document.getElementById("homeTopPilotName"),
+        homePlayerLevelValue: document.getElementById("homePlayerLevelValue"),
+        homeThemeValue: document.getElementById("homeThemeValue"),
+        homeDifficultyValue: document.getElementById("homeDifficultyValue"),
+        homeMusicStatusValue: document.getElementById("homeMusicStatusValue"),
+        homeSfxStatusValue: document.getElementById("homeSfxStatusValue"),
+        homeTopCoinsValue: document.getElementById("homeTopCoinsValue"),
         homeProfileName: document.getElementById("homeProfileName"),
         homeProfileMeta: document.getElementById("homeProfileMeta"),
         homeBestScoreValue: document.getElementById("homeBestScoreValue"),
@@ -106,9 +162,17 @@ window.TurboWingsApplication = (() => {
         homeUnlockedValue: document.getElementById("homeUnlockedValue"),
         homeMissionsList: document.getElementById("homeMissionsList"),
         homeRecentAchievementsList: document.getElementById("homeRecentAchievementsList"),
+        displayModeSelect: document.getElementById("displayModeSelect"),
+        collisionDebugSelect: document.getElementById("collisionDebugSelect"),
         achievementsList: document.getElementById("achievementsList"),
+        achievementsFeaturedList: document.getElementById("achievementsFeaturedList"),
+        achievementsCategoryList: document.getElementById("achievementsCategoryList"),
         achievementsUnlockedValue: document.getElementById("achievementsUnlockedValue"),
+        achievementsTotalValue: document.getElementById("achievementsTotalValue"),
         achievementsRewardedCoinsValue: document.getElementById("achievementsRewardedCoinsValue"),
+        achievementsMasteryValue: document.getElementById("achievementsMasteryValue"),
+        achievementsMasteryMeta: document.getElementById("achievementsMasteryMeta"),
+        achievementsMasteryBar: document.getElementById("achievementsMasteryBar"),
         scoreValue: document.getElementById("scoreValue"),
         coinsValue: document.getElementById("coinsValue"),
         flightLevelValue: document.getElementById("flightLevelValue"),
@@ -116,11 +180,14 @@ window.TurboWingsApplication = (() => {
         finalScoreValue: document.getElementById("finalScoreValue"),
         finalCoinsValue: document.getElementById("finalCoinsValue"),
         bestScoreValue: document.getElementById("bestScoreValue"),
+        lbBestRouteValue: document.getElementById("lbBestRouteValue"),
         gameOverTotalCoinsValue: document.getElementById("gameOverTotalCoinsValue"),
         gameOverTimeValue: document.getElementById("gameOverTimeValue"),
         gameOverFlightLevelValue: document.getElementById("gameOverFlightLevelValue"),
         gameOverPowerUpsValue: document.getElementById("gameOverPowerUpsValue"),
         gameOverObstaclesValue: document.getElementById("gameOverObstaclesValue"),
+        gameOverMissionsCountValue: document.getElementById("gameOverMissionsCountValue"),
+        gameOverAchievementsCountValue: document.getElementById("gameOverAchievementsCountValue"),
         gameOverMissionsList: document.getElementById("gameOverMissionsList"),
         gameOverAchievementsList: document.getElementById("gameOverAchievementsList"),
         gameOverMeta: document.getElementById("gameOverMeta"),
@@ -132,6 +199,15 @@ window.TurboWingsApplication = (() => {
         notifications: document.getElementById("notificationStack"),
         canvas: document.getElementById("gameCanvas")
       };
+
+      this.elements.difficultySettingsLists = [
+        this.elements.difficultySettingsList,
+        this.elements.settingsDifficultySettingsList
+      ].filter(Boolean);
+      this.elements.resetDifficultySettingsButtons = [
+        this.elements.resetDifficultySettingsButton,
+        this.elements.settingsResetDifficultySettingsButton
+      ].filter(Boolean);
     }
 
     cloneDefaultSettings() {
@@ -188,6 +264,8 @@ window.TurboWingsApplication = (() => {
       });
 
       this.bindEvents();
+      this.restoreDisplayMode();
+      this.restoreCollisionDebug();
       subscribe(() => {
         document.documentElement.lang = getLanguage();
         if (this.state.lastSetup?.usedDefaultName) {
@@ -200,6 +278,46 @@ window.TurboWingsApplication = (() => {
 
       this.refreshUi();
       this.showScreen("home", { playNavigation: false });
+      this.applyQueryOverrides();
+    }
+
+    applyQueryOverrides() {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const displayMode = params.get("displayMode");
+      const screen = params.get("screen");
+      const mock = params.get("mock");
+
+      if (displayMode && ["auto", "desktop", "tablet", "mobile"].includes(displayMode)) {
+        this.applyDisplayMode(displayMode);
+      }
+
+      if (screen) {
+        this.showScreen(screen, { playNavigation: false });
+      }
+
+      if (mock === "gameover") {
+        this.showScreen("game", { playNavigation: false });
+        this.renderGameOverSummary({
+          score: 21,
+          coinsCollected: 4,
+          totalCoins: 457,
+          timeSurvived: 9,
+          flightLevelReached: 1,
+          powerUpsCollected: 0,
+          obstaclesPassed: 38,
+          missionsCompleted: [{ titleKey: "mission.score20.title" }],
+          achievementsUnlocked: [{ titleKey: "achievement.firstFlight.title" }],
+          playerName: "Flavio",
+          difficultyId: "storm",
+          timestamp: Date.now()
+        });
+        this.hideGameOverlays();
+        this.elements.gameOverOverlay.classList.remove("hidden");
+      }
     }
 
     loadSettings() {
@@ -367,6 +485,21 @@ window.TurboWingsApplication = (() => {
         this.showScreen("home");
       });
 
+      this.elements.leaderboardToSetupButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.showScreen("setup");
+      });
+
+      this.elements.leaderboardToAchievementsButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.showScreen("achievements");
+      });
+
+      this.elements.leaderboardToSettingsButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.showScreen("settings");
+      });
+
       this.elements.startFlightButton.addEventListener("click", () => {
         this.handleInteraction();
         this.startGameFromSetup();
@@ -422,6 +555,14 @@ window.TurboWingsApplication = (() => {
         this.refreshUi();
       });
 
+      this.elements.displayModeSelect.addEventListener("change", (event) => {
+        this.applyDisplayMode(event.target.value);
+      });
+
+      this.elements.collisionDebugSelect?.addEventListener("change", (event) => {
+        this.applyCollisionDebug(event.target.value === "on");
+      });
+
       this.elements.musicToggle.addEventListener("change", () => {
         this.handleInteraction({ playNavigation: false });
         this.state.settings.musicEnabled = this.elements.musicToggle.checked;
@@ -446,7 +587,6 @@ window.TurboWingsApplication = (() => {
         }
       });
 
-      this.bindBooleanSettingToggle("obstaclesToggle", "obstaclesEnabled");
       this.bindBooleanSettingToggle("powerUpsToggle", "powerUpsEnabled");
       this.bindBooleanSettingToggle("coinsToggle", "coinsEnabled");
       this.bindBooleanSettingToggle("effectsToggle", "effectsEnabled");
@@ -499,22 +639,26 @@ window.TurboWingsApplication = (() => {
         }
       });
 
-      this.elements.difficultySettingsList.addEventListener("input", (event) => {
-        const input = event.target.closest("input[type='range']");
-        if (!input) {
-          return;
-        }
+      this.elements.difficultySettingsLists.forEach((container) => {
+        container.addEventListener("input", (event) => {
+          const input = event.target.closest("input[type='range']");
+          if (!input) {
+            return;
+          }
 
-        const difficultyId = input.dataset.difficultyId;
-        const property = input.dataset.setting;
-        this.state.settings.tuning[difficultyId][property] = Number(input.value);
-        this.saveSettings();
-        this.updateRangeOutputs();
+          const difficultyId = input.dataset.difficultyId;
+          const property = input.dataset.setting;
+          this.state.settings.tuning[difficultyId][property] = Number(input.value);
+          this.saveSettings();
+          this.updateRangeOutputs();
+        });
       });
 
-      this.elements.resetDifficultySettingsButton.addEventListener("click", () => {
-        this.handleInteraction();
-        this.restoreDefaultDifficultySettings();
+      this.elements.resetDifficultySettingsButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          this.handleInteraction();
+          this.restoreDefaultDifficultySettings();
+        });
       });
 
       this.elements.homeMissionsList.addEventListener("click", (event) => {
@@ -539,10 +683,42 @@ window.TurboWingsApplication = (() => {
     }
 
     bindBooleanSettingToggle(elementKey, settingKey) {
-      this.elements[elementKey].addEventListener("change", () => {
-        this.state.settings[settingKey] = this.elements[elementKey].checked;
+      const element = this.elements[elementKey];
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener("change", () => {
+        this.state.settings[settingKey] = element.checked;
         this.saveSettings();
       });
+    }
+
+    restoreDisplayMode() {
+      const savedMode = window.localStorage.getItem("turboWingsDisplayMode") || "auto";
+      this.applyDisplayMode(savedMode);
+    }
+
+    applyDisplayMode(mode) {
+      const displayMode = ["auto", "tablet", "mobile", "desktop"].includes(mode) ? mode : "auto";
+      this.elements.displayModeSelect.value = displayMode;
+      document.body.dataset.displayMode = displayMode;
+      window.localStorage.setItem("turboWingsDisplayMode", displayMode);
+    }
+
+    restoreCollisionDebug() {
+      const enabled = window.localStorage.getItem("turboWingsCollisionDebug") === "on";
+      this.applyCollisionDebug(enabled);
+    }
+
+    applyCollisionDebug(enabled) {
+      const isEnabled = !!enabled;
+      if (this.elements.collisionDebugSelect) {
+        this.elements.collisionDebugSelect.value = isEnabled ? "on" : "off";
+      }
+      document.body.dataset.collisionDebug = isEnabled ? "on" : "off";
+      window.localStorage.setItem("turboWingsCollisionDebug", isEnabled ? "on" : "off");
+      this.game?.setCollisionDebug(isEnabled);
     }
 
     refreshUi() {
@@ -588,7 +764,9 @@ window.TurboWingsApplication = (() => {
       this.elements.musicToggle.checked = this.state.settings.musicEnabled;
       this.elements.sfxToggle.checked = this.state.settings.sfxEnabled;
       this.elements.gameplayAudioToggle.checked = this.state.settings.gameplayAudioEnabled;
-      this.elements.obstaclesToggle.checked = this.state.settings.obstaclesEnabled;
+      if (this.elements.obstaclesToggle) {
+        this.elements.obstaclesToggle.checked = this.state.settings.obstaclesEnabled;
+      }
       this.elements.powerUpsToggle.checked = this.state.settings.powerUpsEnabled;
       this.elements.coinsToggle.checked = this.state.settings.coinsEnabled;
       this.elements.effectsToggle.checked = this.state.settings.effectsEnabled;
@@ -609,8 +787,11 @@ window.TurboWingsApplication = (() => {
           return `
             <label class="difficulty-card ${unlocked ? "" : "locked"}" data-difficulty-id="${difficulty.id}">
               <input type="radio" name="difficulty" value="${difficulty.id}" ${checked} ${disabled} />
+              <div class="difficulty-card-head">
+                <span class="difficulty-visual" aria-hidden="true"></span>
+                <strong>${this.getDisplayDifficultyLabel(difficulty)}</strong>
+              </div>
               <span class="difficulty-badge">${status}</span>
-              <strong>${t(difficulty.labelKey)}</strong>
               <p>${t(difficulty.descriptionKey)}</p>
               <small>${requirementText}</small>
             </label>
@@ -619,8 +800,13 @@ window.TurboWingsApplication = (() => {
         .join("");
     }
 
+    getDisplayDifficultyLabel(difficulty) {
+      const label = typeof difficulty === "string" ? difficulty : t(difficulty.labelKey);
+      return String(label).replace(/^\d+\s*-\s*/, "");
+    }
+
     renderDifficultySettings() {
-      this.elements.difficultySettingsList.innerHTML = this.difficulties
+      const markup = this.difficulties
         .map((difficulty) => {
           const tuning = this.state.settings.tuning[difficulty.id];
           return `
@@ -662,20 +848,23 @@ window.TurboWingsApplication = (() => {
         })
         .join("");
 
+      this.elements.difficultySettingsLists.forEach((container) => {
+        container.innerHTML = markup;
+      });
       this.updateRangeOutputs();
     }
 
     updateRangeOutputs() {
-      this.elements.difficultySettingsList
-        .querySelectorAll("input[type='range']")
-        .forEach((input) => {
-          const output = this.elements.difficultySettingsList.querySelector(
+      this.elements.difficultySettingsLists.forEach((container) => {
+        container.querySelectorAll("input[type='range']").forEach((input) => {
+          const output = container.querySelector(
             `[data-output-key="${input.dataset.difficultyId}-${input.dataset.setting}"]`
           );
           if (output) {
             output.textContent = `${input.value}%`;
           }
         });
+      });
     }
 
     restoreDefaultDifficultySettings() {
@@ -694,34 +883,108 @@ window.TurboWingsApplication = (() => {
 
     renderLeaderboard() {
       if (!this.state.leaderboard.length) {
+        if (this.elements.leaderboardPodium) {
+          this.elements.leaderboardPodium.innerHTML = "";
+        }
         this.elements.leaderboardList.innerHTML = `<div class="leaderboard-empty">${t(
           "leaderboard.empty"
         )}</div>`;
-        return;
+      } else {
+        const podiumEntries = this.state.leaderboard.slice(0, 3);
+        const tableEntries = this.state.leaderboard.slice(3, 11);
+
+        if (this.elements.leaderboardPodium) {
+          const podiumOrder = [1, 0, 2];
+          this.elements.leaderboardPodium.innerHTML = podiumOrder
+            .map((orderIndex) => {
+              const entry = podiumEntries[orderIndex];
+              if (!entry) {
+                return "";
+              }
+
+              const difficulty = getDifficultyById(entry.difficultyId);
+              return `
+                <article class="leaderboard-podium-card leaderboard-podium-card-rank-${orderIndex + 1}">
+                  <span class="leaderboard-podium-rank">#${orderIndex + 1}</span>
+                  <div class="leaderboard-podium-emblem" aria-hidden="true"></div>
+                  <strong>${this.escapeHtml(entry.playerName)}</strong>
+                  <span class="leaderboard-podium-score">${entry.score}</span>
+                  <span class="leaderboard-podium-difficulty">${t(difficulty.labelKey)}</span>
+                </article>
+              `;
+            })
+            .join("");
+        }
+
+        const groupedEntries = [tableEntries.slice(0, 4), tableEntries.slice(4, 8)].filter(
+          (group) => group.length
+        );
+
+        this.elements.leaderboardList.innerHTML = groupedEntries
+          .map(
+            (group) => `
+              <div class="leaderboard-list-column">
+                ${group
+                  .map((entry, index) => {
+                    const difficulty = getDifficultyById(entry.difficultyId);
+                    const rank = tableEntries.indexOf(entry) + 4;
+                    return `
+                      <article class="leaderboard-row leaderboard-row-compact">
+                        <span class="leaderboard-rank">#${rank}</span>
+                        <strong>${this.escapeHtml(entry.playerName)}</strong>
+                        <span>${entry.score}</span>
+                        <span class="leaderboard-difficulty-chip leaderboard-difficulty-${difficulty.id}">${t(
+                          difficulty.labelKey
+                        )}</span>
+                        <span>${this.formatDate(entry.timestamp)}</span>
+                      </article>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            `
+          )
+          .join("");
       }
 
-      this.elements.leaderboardList.innerHTML = this.state.leaderboard
-        .map((entry, index) => {
-          const difficulty = getDifficultyById(entry.difficultyId);
-          return `
-            <article class="leaderboard-row">
-              <span class="leaderboard-rank">#${index + 1}</span>
-              <strong>${this.escapeHtml(entry.playerName)}</strong>
-              <span>${entry.score}</span>
-              <span>${t(difficulty.labelKey)}</span>
-              <span>${this.formatDate(entry.timestamp)}</span>
-            </article>
-          `;
-        })
-        .join("");
+      const lbTopScore = document.getElementById("lbTopScoreValue");
+      const lbTopPilot = document.getElementById("lbTopPilotValue");
+      const lbTotalEntries = document.getElementById("lbTotalEntriesValue");
+      const lbBestRoute = this.elements.lbBestRouteValue;
+      const best = this.state.leaderboard[0];
+      const bestRoute = this.getMostFrequentDifficultyId(this.state.leaderboard);
+      if (lbTopScore) lbTopScore.textContent = best ? String(best.score) : "—";
+      if (lbTopPilot) lbTopPilot.textContent = best ? this.escapeHtml(best.playerName) : "—";
+      if (lbTotalEntries) lbTotalEntries.textContent = String(this.state.leaderboard.length);
+      if (lbBestRoute) {
+        lbBestRoute.textContent = bestRoute ? t(getDifficultyById(bestRoute).labelKey) : "—";
+      }
     }
 
     renderHomeDashboard() {
       const profile = this.state.currentProfile || this.loadProfile(this.getDefaultPlayerName());
       const stats = ensureStats(profile.stats);
-      const recentAchievements = profile.recentAchievements || [];
+      const recentAchievements = (profile.recentAchievements || []).slice(0, 3);
       const bestEntry = this.state.leaderboard[0];
+      const activeTheme = getTheme(getActiveThemeId());
+      const selectedDifficulty = getDifficultyById(
+        this.resolveDifficultySelection(this.state.lastSetup?.difficultyId)
+      );
+      const playerLevel = format("game.flightLevelValue", {
+        level: Math.max(1, stats.highestFlightLevel || 1)
+      });
 
+      this.elements.homeTopPilotName.textContent = profile.playerName;
+      this.elements.homePlayerLevelValue.textContent = playerLevel;
+      this.elements.homeThemeValue.textContent = t(activeTheme?.labelKey || "theme.default");
+      this.elements.homeDifficultyValue.textContent = t(selectedDifficulty.labelKey);
+      this.elements.homeMusicStatusValue.textContent = t(
+        this.state.settings.musicEnabled ? "ui.on" : "ui.off"
+      );
+      this.elements.homeSfxStatusValue.textContent = t(
+        this.state.settings.sfxEnabled ? "ui.on" : "ui.off"
+      );
+      this.elements.homeTopCoinsValue.textContent = String(this.state.totalCoins);
       this.elements.homeProfileName.textContent = profile.playerName;
       this.elements.homeProfileMeta.textContent = format("home.profileMeta", {
         survival: this.formatDuration(stats.longestSurvivalTime),
@@ -793,7 +1056,86 @@ window.TurboWingsApplication = (() => {
         <article class="achievement-mini-card">
           <strong>${t(achievement.titleKey)}</strong>
           <p class="helper-text">${t(achievement.descriptionKey)}</p>
-          <span class="mini-label">${this.formatDate(entry.unlockedAt)}</span>
+          <span class="achievement-mini-date">${this.formatDate(entry.unlockedAt)}</span>
+        </article>
+      `;
+    }
+
+    getAchievementProgress(achievement, stats, unlocked) {
+      if (unlocked) {
+        return {
+          current: achievement.targetValue || 1,
+          target: achievement.targetValue || 1,
+          ratio: 1
+        };
+      }
+
+      if (!achievement.statKey || !achievement.targetValue) {
+        return {
+          current: 0,
+          target: achievement.targetValue || 1,
+          ratio: 0
+        };
+      }
+
+      const current = Math.min(
+        Number(stats?.[achievement.statKey] || 0),
+        Number(achievement.targetValue || 1)
+      );
+      const target = Number(achievement.targetValue || 1);
+
+      return {
+        current,
+        target,
+        ratio: target > 0 ? current / target : 0
+      };
+    }
+
+    renderAchievementTile(achievement, achievementEntry, stats, { featured = false } = {}) {
+      const unlocked = !!achievementEntry?.unlocked;
+      const unlockedAt = achievementEntry?.unlockedAt;
+      const progress = this.getAchievementProgress(achievement, stats, unlocked);
+      const ratioPercent = Math.max(0, Math.min(100, progress.ratio * 100));
+      const badgeText = unlocked ? t("achievements.unlocked") : t("achievements.locked");
+      const rewardValue = Math.max(0, achievement.reward || 0);
+      const cardClass = featured ? "achievement-showcase-card" : "achievement-library-card";
+
+      return `
+        <article class="achievement-card ${cardClass} ${unlocked ? "unlocked" : "locked"}">
+          <div class="achievement-card-top">
+            <span class="achievement-emblem achievement-emblem-${achievement.categoryId}" aria-hidden="true"></span>
+            <span class="achievement-status-pill ${unlocked ? "is-unlocked" : ""}">${badgeText}</span>
+          </div>
+          <div class="achievement-card-copy">
+            <strong>${t(achievement.titleKey)}</strong>
+            <p class="helper-text">${t(achievement.descriptionKey)}</p>
+          </div>
+          <div class="achievement-reward-row">
+            <strong>${rewardValue}</strong>
+            <span class="achievement-reward-coin" aria-hidden="true"></span>
+          </div>
+          ${
+            unlocked
+              ? `
+                <div class="achievement-locked-meta achievement-locked-meta-unlocked">
+                  <span>${t("achievements.unlocked")}</span>
+                  <span>${
+                    unlockedAt
+                      ? this.formatDate(unlockedAt)
+                      : t("achievements.notUnlockedYet")
+                  }</span>
+                </div>
+              `
+              : `
+                <div class="achievement-progress-bar">
+                  <span style="width:${ratioPercent}%"></span>
+                </div>
+                <div class="achievement-locked-meta">
+                  <span>${t("achievements.notUnlockedYet")}</span>
+                  <span>${Math.round(progress.current)} / ${Math.round(progress.target)}</span>
+                </div>
+              `
+          }
         </article>
       `;
     }
@@ -801,40 +1143,83 @@ window.TurboWingsApplication = (() => {
     renderAchievementsScreen() {
       const profile = this.state.currentProfile || this.loadProfile(this.getDefaultPlayerName());
       const achievementState = profile.achievements || {};
+      const stats = ensureStats(profile.stats);
       const unlockedCount = this.achievementTemplates.filter(
         (achievement) => achievementState[achievement.id]?.unlocked
       ).length;
       const rewardTotal = this.achievementTemplates.reduce((total, achievement) => {
         return achievementState[achievement.id]?.unlocked ? total + (achievement.reward || 0) : total;
       }, 0);
+      const totalAchievements = this.achievementTemplates.length;
+      const masteryPercent = totalAchievements
+        ? Math.round((unlockedCount / totalAchievements) * 100)
+        : 0;
+      const featuredSet = new Set(FEATURED_ACHIEVEMENT_IDS);
+      const featuredAchievements = this.achievementTemplates.filter((achievement) =>
+        featuredSet.has(achievement.id)
+      );
+      const libraryAchievements = this.achievementTemplates.filter(
+        (achievement) => !featuredSet.has(achievement.id)
+      );
 
-      this.elements.achievementsUnlockedValue.textContent = `${unlockedCount} / ${this.achievementTemplates.length}`;
+      this.elements.achievementsUnlockedValue.textContent = `${unlockedCount} / ${totalAchievements}`;
+      if (this.elements.achievementsTotalValue) {
+        this.elements.achievementsTotalValue.textContent = String(totalAchievements);
+      }
       this.elements.achievementsRewardedCoinsValue.textContent = String(rewardTotal);
+      if (this.elements.achievementsMasteryValue) {
+        this.elements.achievementsMasteryValue.textContent = `${masteryPercent}%`;
+      }
+      if (this.elements.achievementsMasteryMeta) {
+        this.elements.achievementsMasteryMeta.textContent = format("achievements.masterySummary", {
+          unlocked: unlockedCount,
+          total: totalAchievements
+        });
+      }
+      if (this.elements.achievementsMasteryBar) {
+        this.elements.achievementsMasteryBar.style.width = `${masteryPercent}%`;
+      }
 
-      this.elements.achievementsList.innerHTML = this.achievementTemplates
-        .map((achievement) => {
-          const unlocked = achievementState[achievement.id]?.unlocked;
-          const unlockedAt = achievementState[achievement.id]?.unlockedAt;
+      if (this.elements.achievementsCategoryList) {
+        this.elements.achievementsCategoryList.innerHTML = ACHIEVEMENT_CATEGORIES.map((category) => {
+          const categoryAchievements =
+            category.id === "all"
+              ? this.achievementTemplates
+              : this.achievementTemplates.filter(
+                  (achievement) => achievement.categoryId === category.id
+                );
+          const categoryUnlocked = categoryAchievements.filter(
+            (achievement) => achievementState[achievement.id]?.unlocked
+          ).length;
+
           return `
-            <article class="achievement-card ${unlocked ? "unlocked" : "locked"}">
-              <div class="achievement-head">
-                <strong>${t(achievement.titleKey)}</strong>
-                <span class="mini-label">${
-                  unlocked ? t("achievements.unlocked") : t("achievements.locked")
-                }</span>
-              </div>
-              <p class="helper-text">${t(achievement.descriptionKey)}</p>
-              <div class="achievement-foot">
-                <span>${format("achievements.reward", { coins: achievement.reward || 0 })}</span>
-                <span>${
-                  unlockedAt
-                    ? format("achievements.unlockedAt", { date: this.formatDate(unlockedAt) })
-                    : t("achievements.notUnlockedYet")
-                }</span>
+            <article class="achievements-category-item ${
+              category.id === "all" ? "is-active" : ""
+            }">
+              <span class="achievements-category-icon ${category.iconClass}" aria-hidden="true"></span>
+              <div class="achievements-category-copy">
+                <strong>${t(category.labelKey)}</strong>
+                <span>${categoryUnlocked} / ${categoryAchievements.length}</span>
               </div>
             </article>
           `;
-        })
+        }).join("");
+      }
+
+      if (this.elements.achievementsFeaturedList) {
+        this.elements.achievementsFeaturedList.innerHTML = featuredAchievements
+          .map((achievement) =>
+            this.renderAchievementTile(achievement, achievementState[achievement.id], stats, {
+              featured: true
+            })
+          )
+          .join("");
+      }
+
+      this.elements.achievementsList.innerHTML = libraryAchievements
+        .map((achievement) =>
+          this.renderAchievementTile(achievement, achievementState[achievement.id], stats)
+        )
         .join("");
     }
 
@@ -850,6 +1235,12 @@ window.TurboWingsApplication = (() => {
         });
         this.elements.gameOverPowerUpsValue.textContent = "0";
         this.elements.gameOverObstaclesValue.textContent = "0";
+        if (this.elements.gameOverMissionsCountValue) {
+          this.elements.gameOverMissionsCountValue.textContent = "0";
+        }
+        if (this.elements.gameOverAchievementsCountValue) {
+          this.elements.gameOverAchievementsCountValue.textContent = "0";
+        }
         this.elements.gameOverMissionsList.innerHTML = "";
         this.elements.gameOverAchievementsList.innerHTML = "";
         return;
@@ -865,6 +1256,16 @@ window.TurboWingsApplication = (() => {
       });
       this.elements.gameOverPowerUpsValue.textContent = String(result.powerUpsCollected || 0);
       this.elements.gameOverObstaclesValue.textContent = String(result.obstaclesPassed || 0);
+      if (this.elements.gameOverMissionsCountValue) {
+        this.elements.gameOverMissionsCountValue.textContent = String(
+          result.missionsCompleted?.length || 0
+        );
+      }
+      if (this.elements.gameOverAchievementsCountValue) {
+        this.elements.gameOverAchievementsCountValue.textContent = String(
+          result.achievementsUnlocked?.length || 0
+        );
+      }
       this.elements.gameOverMeta.textContent = format("game.resultMeta", {
         player: result.playerName,
         difficulty: t(getDifficultyById(result.difficultyId).labelKey),
@@ -943,13 +1344,33 @@ window.TurboWingsApplication = (() => {
 
       this.elements.setupSummaryValue.textContent = format("setup.selectedSummary", {
         player: playerName,
-        difficulty: t(difficulty.labelKey)
+        difficulty: this.getDisplayDifficultyLabel(difficulty)
       });
 
       const unlocked = this.isDifficultyUnlocked(selectedDifficulty);
-      this.elements.setupStatusText.textContent = unlocked
-        ? t("setup.startReady")
-        : this.getUnlockRequirementText(difficulty);
+      const statusText = unlocked ? t("setup.startReady") : this.getUnlockRequirementText(difficulty);
+      this.elements.setupStatusText.textContent = statusText;
+      if (this.elements.setupBriefPilotValue) {
+        this.elements.setupBriefPilotValue.textContent = playerName;
+      }
+      if (this.elements.setupBriefShipValue) {
+        this.elements.setupBriefShipValue.textContent = "Turbo Hawk X7";
+      }
+      if (this.elements.setupBriefDifficultyValue) {
+        this.elements.setupBriefDifficultyValue.textContent =
+          this.getDisplayDifficultyLabel(difficulty);
+      }
+      if (this.elements.setupReadinessValue) {
+        this.elements.setupReadinessValue.textContent = unlocked
+          ? t("setup.readyForTakeoff")
+          : this.getUnlockRequirementText(difficulty);
+      }
+      if (this.elements.setupReadinessMeter) {
+        Array.from(this.elements.setupReadinessMeter.children).forEach((item, index) => {
+          item.classList.toggle("is-active", index < difficulty.level);
+          item.classList.toggle("is-locked", !unlocked && index >= difficulty.level - 1);
+        });
+      }
       this.elements.startFlightButton.disabled = !unlocked;
     }
 
@@ -1072,6 +1493,19 @@ window.TurboWingsApplication = (() => {
         score: difficulty.unlockRequirement.score,
         difficulty: t(sourceDifficulty.labelKey)
       });
+    }
+
+    getMostFrequentDifficultyId(entries) {
+      if (!entries?.length) {
+        return null;
+      }
+
+      const counts = entries.reduce((accumulator, entry) => {
+        accumulator[entry.difficultyId] = (accumulator[entry.difficultyId] || 0) + 1;
+        return accumulator;
+      }, {});
+
+      return Object.entries(counts).sort((left, right) => right[1] - left[1])[0]?.[0] || null;
     }
 
     normalizePlayerName(value, fallback = null) {
@@ -1417,6 +1851,9 @@ window.TurboWingsApplication = (() => {
   function boot() {
     const app = new TurboWingsApp();
     app.init();
+    if (typeof window !== "undefined") {
+      window.__turboWingsApp = app;
+    }
   }
 
   return { boot };

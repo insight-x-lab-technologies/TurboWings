@@ -7,6 +7,12 @@ window.TurboWingsAudio = (() => {
       this.masterGain = null;
       this.loopTimer = null;
       this.currentMode = null;
+      this.musicAudio = typeof Audio !== "undefined" ? new Audio() : null;
+
+      if (this.musicAudio) {
+        this.musicAudio.loop = true;
+        this.musicAudio.preload = "auto";
+      }
     }
 
     ensureContext() {
@@ -31,8 +37,8 @@ window.TurboWingsAudio = (() => {
         this.context.resume().catch(() => {});
       }
 
-      if (this.context && this.currentMode && !this.loopTimer && this.canPlayMusic()) {
-        this.scheduleMusicLoop();
+      if (this.currentMode && this.canPlayMusic()) {
+        this.syncMusicPlayback();
       }
     }
 
@@ -53,6 +59,10 @@ window.TurboWingsAudio = (() => {
         window.clearTimeout(this.loopTimer);
         this.loopTimer = null;
       }
+      if (this.musicAudio) {
+        this.musicAudio.pause();
+        this.musicAudio.currentTime = 0;
+      }
       this.currentMode = null;
     }
 
@@ -66,7 +76,7 @@ window.TurboWingsAudio = (() => {
 
     refreshTheme() {
       if (this.currentMode) {
-        this.startMusic(this.currentMode);
+        this.syncMusicPlayback(true);
       }
     }
 
@@ -76,33 +86,59 @@ window.TurboWingsAudio = (() => {
         return;
       }
 
-      if (!this.context) {
-        this.currentMode = mode;
-        return;
-      }
-
-      if (this.currentMode === mode && this.loopTimer) {
+      if (this.currentMode === mode && (this.loopTimer || !this.musicAudio?.paused)) {
         return;
       }
 
       this.stopMusic();
       this.currentMode = mode;
-      this.scheduleMusicLoop();
+      this.syncMusicPlayback(true);
     }
 
-    scheduleMusicLoop() {
-      if (!this.context || !this.currentMode || !this.canPlayMusic()) {
+    syncMusicPlayback(restart = false) {
+      if (!this.currentMode || !this.canPlayMusic()) {
+        if (this.musicAudio) {
+          this.musicAudio.pause();
+        }
         return;
       }
 
       const theme = this.getTheme();
-      const pattern = theme?.audio?.[this.currentMode];
-      if (!pattern) {
+      const track = theme?.audio?.[this.currentMode];
+      if (!track) {
         return;
       }
 
-      const duration = this.playPattern(pattern);
-      this.loopTimer = window.setTimeout(() => this.scheduleMusicLoop(), duration * 1000);
+      if (track.src && this.musicAudio) {
+        if (this.loopTimer) {
+          window.clearTimeout(this.loopTimer);
+          this.loopTimer = null;
+        }
+
+        const nextSrc = new URL(track.src, window.location.href).href;
+        if (this.musicAudio.src !== nextSrc) {
+          this.musicAudio.src = nextSrc;
+          restart = true;
+        }
+
+        this.musicAudio.volume = track.volume ?? 0.22;
+        if (restart) {
+          this.musicAudio.currentTime = 0;
+        }
+        this.musicAudio.play().catch(() => {});
+        return;
+      }
+
+      if (this.musicAudio) {
+        this.musicAudio.pause();
+      }
+
+      if (!this.context) {
+        return;
+      }
+
+      const duration = this.playPattern(track);
+      this.loopTimer = window.setTimeout(() => this.syncMusicPlayback(), duration * 1000);
     }
 
     playButton() {
