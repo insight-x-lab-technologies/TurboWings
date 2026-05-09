@@ -5185,6 +5185,10 @@ body[data-display-mode="auto"] .home-achievements-panel .achievement-mini-card {
   min-height: 7.35rem;
 }
 
+body[data-display-mode="tablet"] .home-bottom-grid {
+  margin-top: 0.28rem;
+}
+
 body:not([data-display-mode="mobile"]) .leaderboard-summary .stat-card {
   min-height: 4.4rem;
   padding: 0.62rem 0.72rem;
@@ -5279,4 +5283,19 @@ body:not([data-display-mode="mobile"]) .leaderboard-row {
 
 body:not([data-display-mode="mobile"]) .leaderboard-row strong {
   font-size: 0.68rem;
+}
+
+body:not([data-display-mode="mobile"]) .icon-button {
+  min-width: 4.5rem;
+  min-height: 4.5rem;
+  height: 4.5rem;
+  padding: 0.55rem;
+  gap: 0;
+  font-size: 0;
+  color: transparent;
+}
+
+body:not([data-display-mode="mobile"]) .icon-button::before {
+  width: 3.2rem;
+  height: 3.2rem;
 }

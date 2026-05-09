@@ -1524,3 +1524,54 @@ Diretório servido: /mnt/userdata/Projetos/Pessoal/TurboWings/src
 100.68.120.124 - - [09/May/2026 14:09:24] "GET /assets/images/v1_default_game_icon_pause.png HTTP/1.1" 200 -
 100.68.120.124 - - [09/May/2026 14:09:24] "GET /assets/songs/v1_default_gameplay.mp3 HTTP/1.1" 200 -
 100.68.120.124 - - [09/May/2026 14:09:24] "GET /assets/images/v1_default_game_icon_home.png HTTP/1.1" 200 -
+100.68.120.124 - - [09/May/2026 14:14:40] "GET / HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:14:40] "GET /css/style.css HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:14:40] "GET /js/i18n.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:14:40] "GET /js/application.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:14:40] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:25:06] "GET / HTTP/1.1" 200 -
+100.68.120.124 - - [09/May/2026 14:25:07] "GET /css/style.css HTTP/1.1" 200 -
+100.68.120.124 - - [09/May/2026 14:25:07] "GET /js/i18n.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:25:07] "GET /js/themes.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:25:07] "GET /js/gameplay.js HTTP/1.1" 304 -
+100.68.120.124 - - [09/May/2026 14:25:07] "GET /js/application.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET / HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /css/themes.css HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /css/style.css HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_logo.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/themes.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/progression.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/storage.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/missions.js HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/i18n.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/achievements.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/audio.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/gameplay.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /js/application.js HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_pilot.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_bg.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_coin_gold.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_points.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_trophy.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_settings.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_level_2-3.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_HomeJet.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_gameplay_jet.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_powerup_shield.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_obstacle_11.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_powerup_magnet.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/images/v1_default_game_icon_powerup_slowmotion.png HTTP/1.1" 304 -
+100.76.11.120 - - [09/May/2026 14:38:10] "GET /assets/songs/v1_default_menu.mp3 HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:38:12] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:38:12] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:38:12] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:38:12] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:38:12] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:38:12] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:42:08] "GET /assets/images/v1_default_game_icon_level_1.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:42:08] "GET /assets/images/v1_default_game_icon_level_4.png HTTP/1.1" 200 -
+100.76.11.120 - - [09/May/2026 14:42:08] code 404, message File not found
+100.76.11.120 - - [09/May/2026 14:42:08] "GET /favicon.ico HTTP/1.1" 404 -
+100.76.11.120 - - [09/May/2026 14:42:08] "GET /assets/images/v1_default_game_icon_level_5.png HTTP/1.1" 200 -

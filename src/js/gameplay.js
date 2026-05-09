@@ -278,6 +278,7 @@ window.TurboWingsGameplay = (() => {
       this.effectSignature = "";
       this.difficultyState = null;
       this.soundCooldowns = {};
+      this.backgroundScrollX = 0;
       this.runMetrics = {
         powerUpsCollected: 0,
         obstaclesPassed: 0,
@@ -549,6 +550,7 @@ window.TurboWingsGameplay = (() => {
       this.invulnerableTimer = Math.max(0, this.invulnerableTimer - delta);
 
       this.updateClouds(delta, worldMultiplier, this.started);
+      this.updateBackgroundScroll(delta, worldSpeed, this.started);
       this.updateTrail(delta);
       this.updateParticles(delta);
 
@@ -681,6 +683,24 @@ window.TurboWingsGameplay = (() => {
           cloud.y = this.height * (0.08 + Math.random() * 0.38);
         }
       }
+    }
+
+    updateBackgroundScroll(delta, worldSpeed, moving) {
+      const image = this.themeAssets.background;
+      if (!image?.naturalWidth || !image?.naturalHeight) {
+        return;
+      }
+
+      const idleSpeed = 18;
+      const parallaxFactor = 0.18;
+      const scrollSpeed = moving ? worldSpeed * parallaxFactor : idleSpeed;
+      const drawWidth = Math.max(
+        1,
+        this.height * (image.naturalWidth / image.naturalHeight)
+      );
+
+      this.backgroundScrollX =
+        (this.backgroundScrollX + scrollSpeed * delta) % drawWidth;
     }
 
     updateTrail(delta) {
@@ -1366,32 +1386,21 @@ window.TurboWingsGameplay = (() => {
         return false;
       }
 
-      const sourceAspect = image.naturalWidth / image.naturalHeight;
-      const targetAspect = this.width / this.height;
-      let sourceWidth = image.naturalWidth;
-      let sourceHeight = image.naturalHeight;
-      let sourceX = 0;
-      let sourceY = 0;
+      const drawWidth = this.height * (image.naturalWidth / image.naturalHeight);
+      const drawHeight = this.height;
+      const offsetX = this.backgroundScrollX % drawWidth;
+      const firstTileX = -offsetX;
+      const tileCount = Math.ceil(this.width / drawWidth) + 2;
 
-      if (sourceAspect > targetAspect) {
-        sourceWidth = image.naturalHeight * targetAspect;
-        sourceX = (image.naturalWidth - sourceWidth) * 0.5;
-      } else {
-        sourceHeight = image.naturalWidth / targetAspect;
-        sourceY = Math.max(0, image.naturalHeight - sourceHeight);
+      for (let index = 0; index < tileCount; index += 1) {
+        this.ctx.drawImage(
+          image,
+          firstTileX + index * drawWidth,
+          0,
+          drawWidth,
+          drawHeight
+        );
       }
-
-      this.ctx.drawImage(
-        image,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        0,
-        0,
-        this.width,
-        this.height
-      );
 
       this.ctx.fillStyle = theme.haze || "rgba(255, 155, 96, 0.08)";
       this.ctx.fillRect(0, 0, this.width, this.height);
