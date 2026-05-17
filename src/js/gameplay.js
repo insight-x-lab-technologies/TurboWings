@@ -176,6 +176,7 @@ window.TurboWingsGameplay = (() => {
       this.flightLevel = 1;
       this.themeAssets = {
         themeId: null,
+        assetSignature: "",
         background: null,
         plane: null,
         planeFrame: null,
@@ -210,12 +211,20 @@ window.TurboWingsGameplay = (() => {
     preloadThemeAssets(themeId = this.activeThemeId) {
       const theme = this.getTheme?.(themeId);
       const assets = theme?.assets;
-      if (!assets || this.themeAssets.themeId === themeId) {
+      const assetSignature = JSON.stringify({
+        backgroundImage: assets?.backgroundImage,
+        gameplayJet: assets?.gameplayJet,
+        gameplayJetFrame: assets?.gameplayJetFrame,
+        obstacles: assets?.obstacles,
+        icons: assets?.icons
+      });
+      if (!assets || (this.themeAssets.themeId === themeId && this.themeAssets.assetSignature === assetSignature)) {
         return;
       }
 
       this.themeAssets = {
         themeId,
+        assetSignature,
         background: createThemeImage(assets.backgroundImage),
         plane: createThemeImage(assets.gameplayJet),
         planeFrame: assets.gameplayJetFrame || null,

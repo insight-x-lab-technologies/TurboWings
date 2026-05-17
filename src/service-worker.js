@@ -1,4 +1,4 @@
-const CACHE_VERSION = "turbo-wings-v4";
+const CACHE_VERSION = "turbo-wings-v5";
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -51,6 +51,8 @@ const APP_SHELL_ASSETS = [
   "./assets/images/v1_default_game_icon_BestScore.png",
   "./assets/images/v1_default_game_icon_TimeSurvived.png",
   "./assets/images/v1_default_game_icon_CoinBank.png",
+  "./assets/images/v1_default_game_icon_ObstaclesPassed.png",
+  "./assets/images/v1_default_game_icon_PowerUpsCollected.png",
   "./assets/images/v1_default_game_icon_powerup_shield.png",
   "./assets/images/v1_default_game_icon_powerup_magnet.png",
   "./assets/images/v1_default_game_icon_powerup_slowmotion.png",

@@ -809,6 +809,8 @@ select {
 }
 
 .stat-card::before,
+.summary-block-game-over-powerups::before,
+.summary-block-game-over-obstacles::before,
 .summary-block-game-over-missions::before,
 .summary-block-game-over-achievements::before,
 .difficulty-visual,
@@ -873,6 +875,16 @@ select {
   background-image: url("../assets/images/v1_default_game_icon_level_1.png");
 }
 
+.summary-block-game-over-powerups::before {
+  background-image: var(--game-icon-powerups-collected);
+}
+
+.summary-block-game-over-obstacles::before {
+  background-image: var(--game-icon-obstacles-passed);
+}
+
+.summary-block-game-over-powerups::before,
+.summary-block-game-over-obstacles::before,
 .summary-block-game-over-missions::before,
 .summary-block-game-over-achievements::before {
   width: 1.75rem;
@@ -3932,6 +3944,8 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-missi
     text-align: left;
   }
 
+  body:not([data-display-mode="mobile"]) .summary-block-game-over-powerups::before,
+  body:not([data-display-mode="mobile"]) .summary-block-game-over-obstacles::before,
   body:not([data-display-mode="mobile"]) .summary-block-game-over-missions::before,
   body:not([data-display-mode="mobile"]) .summary-block-game-over-achievements::before {
     grid-row: 1 / 3;
@@ -4749,6 +4763,10 @@ body:not([data-display-mode="mobile"]) .game-over-actions {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+body:not([data-display-mode="mobile"]) .game-over-columns {
+  display: none;
+}
+
 body:not([data-display-mode="mobile"]) .game-over-stats .stat-card {
   min-height: 5.8rem;
   padding: 0.7rem;
@@ -4788,6 +4806,8 @@ body:not([data-display-mode="mobile"]) .game-over-columns .summary-block {
   text-align: left;
 }
 
+body:not([data-display-mode="mobile"]) .game-over-wide-metrics .summary-block-game-over-powerups::before,
+body:not([data-display-mode="mobile"]) .game-over-wide-metrics .summary-block-game-over-obstacles::before,
 body:not([data-display-mode="mobile"]) .game-over-wide-metrics .summary-block-game-over-missions::before,
 body:not([data-display-mode="mobile"]) .game-over-wide-metrics .summary-block-game-over-achievements::before {
   grid-row: 1 / 3;
@@ -4810,7 +4830,7 @@ body:not([data-display-mode="mobile"]) .game-over-wide-metrics .stat-label {
 }
 
 body:not([data-display-mode="mobile"]) .game-over-actions .button {
-  min-height: 3.15rem;
+  min-height: 4.75rem;
   padding: 0.5rem 0.45rem;
   flex-direction: column;
   gap: 0.28rem;
@@ -4821,9 +4841,9 @@ body:not([data-display-mode="mobile"]) .game-over-actions .button {
 }
 
 body:not([data-display-mode="mobile"]) .game-over-actions .button::before {
-  width: 1.45rem;
-  height: 1.45rem;
-  flex: 0 0 auto;
+  width: 2.9rem;
+  height: 2.9rem;
+  flex: 0 0 2.9rem;
 }
 
 body:not([data-display-mode="mobile"]) .achievements-shell {

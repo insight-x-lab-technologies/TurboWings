@@ -39,6 +39,8 @@
   --game-icon-best-score: url("../assets/images/v1_default_game_icon_BestScore.png");
   --game-icon-coin-bank: url("../assets/images/v1_default_game_icon_CoinBank.png");
   --game-icon-time-survived: url("../assets/images/v1_default_game_icon_TimeSurvived.png");
+  --game-icon-obstacles-passed: url("../assets/images/v1_default_game_icon_ObstaclesPassed.png");
+  --game-icon-powerups-collected: url("../assets/images/v1_default_game_icon_PowerUpsCollected.png");
   --game-icon-missions-completed: url("../assets/images/v1_default_game_icon_MissionsCompleted.png");
   --game-icon-achievements-unlocked: url("../assets/images/v1_default_game_icon_AchievementsUnlocked.png");
   --game-icon-play-again: url("../assets/images/v1_default_game_icon_PlayAgain.png");
