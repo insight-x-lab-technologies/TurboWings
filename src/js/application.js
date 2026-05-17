@@ -68,6 +68,11 @@ window.TurboWingsApplication = (() => {
     }
   ];
 
+  const Aircraft = window.TurboWingsAircraft;
+  const Online = window.TurboWingsOnline;
+  const Daily = window.TurboWingsDaily;
+  const ScoreCard = window.TurboWingsScoreCard;
+
   class TurboWingsApp {
     constructor() {
       this.difficulties = getDifficultyDefinitions();
@@ -95,7 +100,14 @@ window.TurboWingsApplication = (() => {
         activeEffects: [],
         flightLevel: 1,
         currentProfile: null,
-        notifications: []
+        notifications: [],
+        selectedAircraftId: Aircraft.DEFAULT_AIRCRAFT_ID,
+        ownedAircraft: ["classic"],
+        onlinePlayer: null,
+        countryInfo: null,
+        leaderboardTab: "local",
+        isDaily: false,
+        shopReturnScreen: "home"
       };
 
       this.elements = {
@@ -208,7 +220,31 @@ window.TurboWingsApplication = (() => {
         pauseOverlay: document.getElementById("pauseOverlay"),
         gameOverOverlay: document.getElementById("gameOverOverlay"),
         notifications: document.getElementById("notificationStack"),
-        canvas: document.getElementById("gameCanvas")
+        canvas: document.getElementById("gameCanvas"),
+        openShopButton: document.getElementById("openShopButton"),
+        backFromShopButton: document.getElementById("backFromShopButton"),
+        changeAircraftButton: document.getElementById("changeAircraftButton"),
+        shopAircraftGrid: document.getElementById("shopAircraftGrid"),
+        setupFeatureName: document.getElementById("setupFeatureName"),
+        setupFeatureClass: document.getElementById("setupFeatureClass"),
+        setupFeatureJet: document.getElementById("setupFeatureJet"),
+        setupFeatureSpeedBar: document.getElementById("setupFeatureSpeedBar"),
+        setupFeatureHandlingBar: document.getElementById("setupFeatureHandlingBar"),
+        setupFeatureDurabilityBar: document.getElementById("setupFeatureDurabilityBar"),
+        shopCoinBalance: document.getElementById("shopCoinBalance"),
+        openDailyButton: document.getElementById("openDailyButton"),
+        shareScoreCardButton: document.getElementById("shareScoreCardButton"),
+        onlineStatusChip: document.getElementById("onlineStatusChip"),
+        onlineStatusLabel: document.getElementById("onlineStatusLabel"),
+        homeOnlineIcon: document.getElementById("homeOnlineIcon"),
+        lbTabLocal: document.getElementById("lbTabLocal"),
+        lbTabGlobal: document.getElementById("lbTabGlobal"),
+        lbTabDaily: document.getElementById("lbTabDaily"),
+        lbCountryFilter: document.getElementById("lbCountryFilter"),
+        lbCountryFilterLabel: document.getElementById("lbCountryFilterLabel"),
+        leaderboardLoading: document.getElementById("leaderboardLoading"),
+        hudDailyBadge: document.getElementById("hudDailyBadge"),
+        onlineModeToggle: document.getElementById("onlineModeToggle")
       };
 
       this.elements.difficultySettingsLists = [
@@ -249,6 +285,8 @@ window.TurboWingsApplication = (() => {
       this.state.unlocks = Storage.loadUnlocks();
       this.state.lastSetup = this.loadLastSetup();
       this.state.totalCoins = Storage.loadTotalCoins();
+      this.state.ownedAircraft = Storage.loadOwnedAircraft();
+      this.state.selectedAircraftId = Storage.loadSelectedAircraft();
       this.loadProfile(this.state.lastSetup.playerName);
       this.syncBestScoreStorage();
 
@@ -264,7 +302,17 @@ window.TurboWingsApplication = (() => {
 
       this.game = new TurboWingsGame({
         canvas: this.elements.canvas,
-        getTheme: () => getTheme(getActiveThemeId()),
+        getTheme: () => {
+          const theme = getTheme(getActiveThemeId());
+          const ac = Aircraft.getAircraftById(this.state.selectedAircraftId);
+          if (ac && ac.id !== Aircraft.DEFAULT_AIRCRAFT_ID) {
+            return {
+              ...theme,
+              assets: { ...theme.assets, gameplayJet: ac.imageSrc }
+            };
+          }
+          return theme;
+        },
         onScoreChange: (score) => this.updateScore(score),
         onCoinsChange: (coins) => this.updateRunCoins(coins),
         onEffectsChange: (effects) => this.updateActiveEffects(effects),
@@ -292,6 +340,7 @@ window.TurboWingsApplication = (() => {
       this.refreshUi();
       this.showScreen("home", { playNavigation: false });
       this.applyQueryOverrides();
+      this.initOnline();
     }
 
     applyQueryOverrides() {
@@ -654,6 +703,18 @@ window.TurboWingsApplication = (() => {
       this.bindBooleanSettingToggle("coinsToggle", "coinsEnabled");
       this.bindBooleanSettingToggle("effectsToggle", "effectsEnabled");
 
+      this.elements.onlineModeToggle?.addEventListener("change", () => {
+        const enabled = !!this.elements.onlineModeToggle.checked;
+        Online.setOnlineMode(enabled);
+        if (enabled) {
+          this.initOnline();
+        } else {
+          this.state.onlinePlayer = null;
+          this.state.countryInfo = null;
+          this.updateOnlineStatus("offline");
+        }
+      });
+
       this.elements.playerNameInput.addEventListener("input", (event) => {
         const value = String(event.target.value || "").slice(0, 24);
         const fallbackName = this.getDefaultPlayerName();
@@ -751,6 +812,58 @@ window.TurboWingsApplication = (() => {
         this.handleInteraction({ playNavigation: false });
         this.state.selectedAchievementCategory = categoryId;
         this.renderAchievementsScreen();
+      });
+
+      // Shop
+      this.elements.openShopButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.state.shopReturnScreen = "home";
+        this.showScreen("shop");
+      });
+
+      this.elements.backFromShopButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        const returnTo = this.state.shopReturnScreen || "home";
+        this.state.shopReturnScreen = "home";
+        if (returnTo === "setup") {
+          this.showScreen("setup");
+          this.updateSetupSummary();
+        } else {
+          this.showScreen("home");
+        }
+      });
+
+      this.elements.changeAircraftButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.state.shopReturnScreen = "setup";
+        this.showScreen("shop");
+      });
+
+      // Daily Challenge
+      this.elements.openDailyButton?.addEventListener("click", () => {
+        this.handleInteraction();
+        this.startDailyChallenge();
+      });
+
+      // Score Card Share
+      this.elements.shareScoreCardButton?.addEventListener("click", () => {
+        this.handleInteraction({ playNavigation: false });
+        this.shareScoreCard();
+      });
+
+      // Leaderboard tabs
+      this.elements.lbTabLocal?.addEventListener("click", () => {
+        this.switchLeaderboardTab("local");
+      });
+      this.elements.lbTabGlobal?.addEventListener("click", () => {
+        this.switchLeaderboardTab("global");
+      });
+      this.elements.lbTabDaily?.addEventListener("click", () => {
+        this.switchLeaderboardTab("daily");
+      });
+
+      this.elements.lbCountryFilter?.addEventListener("change", () => {
+        this.loadLeaderboardTab(this.state.leaderboardTab);
       });
     }
 
@@ -969,6 +1082,7 @@ window.TurboWingsApplication = (() => {
       this.updateFlightLevel(this.state.flightLevel || 1);
       this.updateActiveEffects(this.state.activeEffects || []);
       this.syncAudioForCurrentScreen();
+      this.updateDailyButton();
     }
 
     renderTranslations() {
@@ -1000,6 +1114,9 @@ window.TurboWingsApplication = (() => {
       this.elements.powerUpsToggle.checked = this.state.settings.powerUpsEnabled;
       this.elements.coinsToggle.checked = this.state.settings.coinsEnabled;
       this.elements.effectsToggle.checked = this.state.settings.effectsEnabled;
+      if (this.elements.onlineModeToggle) {
+        this.elements.onlineModeToggle.checked = Online.isOnlineModeEnabled();
+      }
     }
 
     renderDifficultyCards() {
@@ -1639,8 +1756,29 @@ window.TurboWingsApplication = (() => {
       if (this.elements.setupBriefPilotValue) {
         this.elements.setupBriefPilotValue.textContent = playerName;
       }
+      const selectedAc = Aircraft.getAircraftById(this.state.selectedAircraftId);
       if (this.elements.setupBriefShipValue) {
-        this.elements.setupBriefShipValue.textContent = "Turbo Hawk X7";
+        this.elements.setupBriefShipValue.textContent = selectedAc ? t(selectedAc.nameKey) : "Turbo Hawk X7";
+      }
+      if (selectedAc) {
+        if (this.elements.setupFeatureName) {
+          this.elements.setupFeatureName.textContent = t(selectedAc.nameKey);
+        }
+        if (this.elements.setupFeatureClass) {
+          this.elements.setupFeatureClass.textContent = t(selectedAc.classKey);
+        }
+        if (this.elements.setupFeatureJet) {
+          this.elements.setupFeatureJet.src = selectedAc.imageSrc;
+        }
+        if (this.elements.setupFeatureSpeedBar) {
+          this.elements.setupFeatureSpeedBar.style.width = `${selectedAc.speed}%`;
+        }
+        if (this.elements.setupFeatureHandlingBar) {
+          this.elements.setupFeatureHandlingBar.style.width = `${selectedAc.handling}%`;
+        }
+        if (this.elements.setupFeatureDurabilityBar) {
+          this.elements.setupFeatureDurabilityBar.style.width = `${selectedAc.durability}%`;
+        }
       }
       if (this.elements.setupBriefDifficultyValue) {
         this.elements.setupBriefDifficultyValue.textContent =
@@ -1878,11 +2016,14 @@ window.TurboWingsApplication = (() => {
     }
 
     startRun(setup) {
+      const isDaily = !!setup.isDaily;
+      this.state.isDaily = isDaily;
       this.state.currentRun = {
         playerName: setup.playerName,
         difficultyId: setup.difficultyId,
         themeId: getActiveThemeId(),
-        startedAt: Date.now()
+        startedAt: Date.now(),
+        isDaily
       };
       this.state.latestResult = null;
       this.state.runCoins = 0;
@@ -1895,6 +2036,9 @@ window.TurboWingsApplication = (() => {
       this.elements.finalCoinsValue.textContent = "0";
       this.updateActiveEffects([]);
       this.updateGameMeta();
+      if (this.elements.hudDailyBadge) {
+        this.elements.hudDailyBadge.classList.toggle("hidden", !isDaily);
+      }
       this.showScreen("game");
       this.game.enter({
         difficultyId: setup.difficultyId,
@@ -1905,7 +2049,8 @@ window.TurboWingsApplication = (() => {
           powerUpsEnabled: this.state.settings.powerUpsEnabled,
           coinsEnabled: this.state.settings.coinsEnabled,
           effectsEnabled: this.state.settings.effectsEnabled
-        }
+        },
+        rng: isDaily ? Daily.getDailyRng() : null
       });
     }
 
@@ -1932,6 +2077,15 @@ window.TurboWingsApplication = (() => {
       if (screenName !== "game") {
         this.game?.stop();
         this.hideGameOverlays();
+      }
+
+      if (screenName === "leaderboard") {
+        this.renderLeaderboardTabs();
+        this.loadLeaderboardTab(this.state.leaderboardTab);
+      }
+
+      if (screenName === "shop") {
+        this.renderShopScreen();
       }
 
       if (playNavigation) {
@@ -2285,6 +2439,26 @@ window.TurboWingsApplication = (() => {
 
       this.refreshUi();
       this.showGameOver(this.state.latestResult);
+
+      if (run.isDaily) {
+        Daily.recordDailyPlay(run.score, run.coinsCollected || 0);
+        this.updateDailyButton();
+        if (Online.isOnlineModeEnabled() && this.state.onlinePlayer) {
+          Online.submitDailyScore(
+            this.state.onlinePlayer.id,
+            run.playerName,
+            run,
+            this.state.countryInfo
+          ).then(() => {}).catch(() => {});
+        }
+      } else if (Online.isOnlineModeEnabled() && this.state.onlinePlayer && run.score > 0) {
+        Online.submitScore(
+          this.state.onlinePlayer.id,
+          run.playerName,
+          run,
+          this.state.countryInfo
+        ).then(() => {}).catch(() => {});
+      }
     }
 
     processUnlocks(run) {
@@ -2336,6 +2510,449 @@ window.TurboWingsApplication = (() => {
       }
 
       this.refreshUi();
+    }
+
+    // ===== AIRCRAFT SHOP =====
+
+    renderShopScreen() {
+      const grid = this.elements.shopAircraftGrid;
+      if (!grid) {
+        return;
+      }
+      if (this.elements.shopCoinBalance) {
+        this.elements.shopCoinBalance.textContent = this.state.totalCoins.toLocaleString();
+      }
+      grid.innerHTML = "";
+      const catalog = Aircraft.getCatalog();
+      catalog.forEach((ac) => {
+        const owned = this.state.ownedAircraft.includes(ac.id);
+        const equipped = this.state.selectedAircraftId === ac.id;
+        const canAfford = this.state.totalCoins >= ac.price;
+        const card = document.createElement("article");
+        card.className = `shop-card${equipped ? " is-equipped" : ""}`;
+
+        const badge = equipped
+          ? `<span class="shop-card-badge is-equipped-badge">${t("shop.equippedBadge")}</span>`
+          : owned
+          ? `<span class="shop-card-badge">${t("shop.ownedBadge")}</span>`
+          : "";
+
+        const imgHtml = `<img src="${ac.imageSrc}" alt="${t(ac.nameKey)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="shop-card-art-placeholder" style="display:none"></span>`;
+
+        const actionHtml = equipped
+          ? `<button class="button button-secondary" disabled>${t("shop.equippedBadge")}</button>`
+          : owned
+          ? `<button class="button button-primary" data-equip="${ac.id}">${t("shop.equipButton")}</button>`
+          : `<button class="button button-primary" data-buy="${ac.id}" ${canAfford ? "" : "disabled"}>
+               ${canAfford ? format("shop.buyButton", { price: ac.price.toLocaleString() }) : t("shop.notEnoughCoins")}
+             </button>`;
+
+        card.innerHTML = `
+          ${badge}
+          <div class="shop-card-art">${imgHtml}</div>
+          <div class="shop-card-name">${t(ac.nameKey)}</div>
+          <div class="shop-card-class">${t("shop.classLabel")}: ${t(ac.classKey)}</div>
+          <div class="shop-card-bars">
+            <div class="shop-card-bar">
+              <span>${t("shop.statSpeed")}</span>
+              <div class="shop-card-bar-track"><div class="shop-card-bar-fill" style="width:${ac.speed}%"></div></div>
+            </div>
+            <div class="shop-card-bar">
+              <span>${t("shop.statHandling")}</span>
+              <div class="shop-card-bar-track"><div class="shop-card-bar-fill" style="width:${ac.handling}%"></div></div>
+            </div>
+            <div class="shop-card-bar">
+              <span>${t("shop.statDurability")}</span>
+              <div class="shop-card-bar-track"><div class="shop-card-bar-fill" style="width:${ac.durability}%"></div></div>
+            </div>
+          </div>
+          <div class="shop-card-action">${actionHtml}</div>
+        `;
+
+        card.addEventListener("click", (e) => {
+          const buyBtn = e.target.closest("[data-buy]");
+          const equipBtn = e.target.closest("[data-equip]");
+          if (buyBtn) {
+            this.buyAircraft(buyBtn.dataset.buy);
+          } else if (equipBtn) {
+            this.equipAircraft(equipBtn.dataset.equip);
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    buyAircraft(id) {
+      const ac = Aircraft.getAircraftById(id);
+      if (!ac || this.state.ownedAircraft.includes(id)) {
+        return;
+      }
+      if (this.state.totalCoins < ac.price) {
+        this.enqueueNotification({
+          type: "warning",
+          title: t("shop.notEnoughCoins"),
+          message: format("shop.buyButton", { price: ac.price.toLocaleString() })
+        });
+        return;
+      }
+      this.state.totalCoins -= ac.price;
+      this.state.ownedAircraft = [...this.state.ownedAircraft, id];
+      Storage.saveTotalCoins(this.state.totalCoins);
+      Storage.saveOwnedAircraft(this.state.ownedAircraft);
+      this.equipAircraft(id);
+      this.enqueueNotification({
+        type: "coins",
+        title: t("notify.purchaseSuccess").replace("{name}", t(ac.nameKey)),
+        message: format("notify.equipSuccess", { name: t(ac.nameKey) })
+      });
+    }
+
+    equipAircraft(id) {
+      const ac = Aircraft.getAircraftById(id);
+      if (!ac || !this.state.ownedAircraft.includes(id)) {
+        return;
+      }
+      this.state.selectedAircraftId = id;
+      Storage.saveSelectedAircraft(id);
+      this.renderShopScreen();
+      this.enqueueNotification({
+        type: "achievement",
+        title: format("notify.equipSuccess", { name: t(ac.nameKey) }),
+        message: ""
+      });
+      this.refreshUi();
+    }
+
+    // ===== ONLINE =====
+
+    async initOnline() {
+      if (!Online.isOnlineModeEnabled()) {
+        this.updateOnlineStatus("offline");
+        return;
+      }
+      this.updateOnlineStatus("connecting");
+      const country = await Online.detectCountry();
+      this.state.countryInfo = country;
+      const playerName = this.state.lastSetup?.playerName;
+      if (playerName) {
+        const result = await Online.ensurePlayer(playerName, country);
+        if (result?.player) {
+          this.state.onlinePlayer = result.player;
+          this.updateOnlineStatus("online");
+        } else {
+          this.updateOnlineStatus("offline");
+        }
+      } else {
+        this.updateOnlineStatus("online");
+      }
+    }
+
+    updateOnlineStatus(state) {
+      const chip = this.elements.onlineStatusChip;
+      const label = this.elements.onlineStatusLabel;
+      if (chip && label) {
+        chip.classList.remove("is-online", "is-offline", "is-connecting");
+        if (state === "online") {
+          chip.classList.add("is-online");
+          label.textContent = t("online.connected");
+        } else if (state === "connecting") {
+          label.textContent = t("online.connecting");
+        } else {
+          chip.classList.add("is-offline");
+          label.textContent = t("online.offline");
+        }
+      }
+      const icon = this.elements.homeOnlineIcon;
+      if (icon) {
+        icon.src = state === "online"
+          ? "./assets/images/v1_default_game_icon_OnLine.png"
+          : "./assets/images/v1_default_game_icon_OffLine.png";
+      }
+    }
+
+    // ===== LEADERBOARD TABS =====
+
+    renderLeaderboardTabs() {
+      const isOnline = Online.isOnlineModeEnabled();
+      if (this.elements.lbTabGlobal) {
+        this.elements.lbTabGlobal.disabled = !isOnline;
+      }
+      if (this.elements.lbTabDaily) {
+        this.elements.lbTabDaily.disabled = !isOnline;
+      }
+      if (this.elements.lbCountryFilterLabel) {
+        this.elements.lbCountryFilterLabel.hidden =
+          this.state.leaderboardTab !== "global" || !isOnline;
+      }
+      [this.elements.lbTabLocal, this.elements.lbTabGlobal, this.elements.lbTabDaily].forEach(
+        (btn) => {
+          if (btn) {
+            btn.classList.toggle("is-active", btn.dataset.lbTab === this.state.leaderboardTab);
+          }
+        }
+      );
+    }
+
+    switchLeaderboardTab(tab) {
+      this.state.leaderboardTab = tab;
+      this.renderLeaderboardTabs();
+      this.loadLeaderboardTab(tab);
+    }
+
+    async loadLeaderboardTab(tab) {
+      if (tab === "local") {
+        this.renderLocalLeaderboardHead();
+        this.renderLeaderboard();
+        if (this.elements.leaderboardLoading) {
+          this.elements.leaderboardLoading.classList.add("hidden");
+        }
+        return;
+      }
+
+      if (!Online.isOnlineModeEnabled()) {
+        return;
+      }
+
+      if (this.elements.leaderboardLoading) {
+        this.elements.leaderboardLoading.classList.remove("hidden");
+        this.elements.leaderboardLoading.textContent = t("leaderboard.globalLoading");
+      }
+      const lbList = this.elements.leaderboardList;
+      if (lbList) {
+        lbList.innerHTML = "";
+      }
+
+      if (tab === "global") {
+        const countryCode =
+          this.elements.lbCountryFilter?.checked && this.state.countryInfo?.code
+            ? this.state.countryInfo.code
+            : null;
+        const rows = await Online.fetchGlobalLeaderboard(countryCode);
+        if (this.elements.leaderboardLoading) {
+          this.elements.leaderboardLoading.classList.add("hidden");
+        }
+        this.renderGlobalLeaderboardHead();
+        this.renderGlobalLeaderboardRows(rows);
+        this.renderLeaderboardSummaryFromRows(rows);
+        this.renderLeaderboardPodiumFromRows(rows);
+      } else if (tab === "daily") {
+        const rows = await Online.fetchDailyLeaderboard();
+        if (this.elements.leaderboardLoading) {
+          this.elements.leaderboardLoading.classList.add("hidden");
+        }
+        this.renderDailyLeaderboardHead();
+        this.renderDailyLeaderboardRows(rows);
+        this.renderLeaderboardSummaryFromRows(rows);
+        this.renderLeaderboardPodiumFromRows(rows);
+      }
+    }
+
+    renderLocalLeaderboardHead() {
+      const head = document.getElementById("leaderboardHead");
+      if (!head) {
+        return;
+      }
+      head.innerHTML = `
+        <span data-i18n="leaderboard.rank">${t("leaderboard.rank")}</span>
+        <span data-i18n="leaderboard.player">${t("leaderboard.player")}</span>
+        <span data-i18n="leaderboard.score">${t("leaderboard.score")}</span>
+        <span data-i18n="leaderboard.difficulty">${t("leaderboard.difficulty")}</span>
+        <span data-i18n="leaderboard.date">${t("leaderboard.date")}</span>
+      `;
+    }
+
+    renderGlobalLeaderboardHead() {
+      const head = document.getElementById("leaderboardHead");
+      if (!head) {
+        return;
+      }
+      head.innerHTML = `
+        <span>${t("leaderboard.rank")}</span>
+        <span>${t("leaderboard.player")}</span>
+        <span>${t("leaderboard.score")}</span>
+        <span>${t("leaderboard.difficulty")}</span>
+        <span>${t("leaderboard.country")}</span>
+      `;
+    }
+
+    renderDailyLeaderboardHead() {
+      const head = document.getElementById("leaderboardHead");
+      if (!head) {
+        return;
+      }
+      head.innerHTML = `
+        <span>${t("leaderboard.rank")}</span>
+        <span>${t("leaderboard.player")}</span>
+        <span>${t("leaderboard.score")}</span>
+        <span>${t("leaderboard.country")}</span>
+        <span>${t("leaderboard.date")}</span>
+      `;
+    }
+
+    renderGlobalLeaderboardRows(rows) {
+      const lbList = this.elements.leaderboardList;
+      if (!lbList) {
+        return;
+      }
+      if (!rows || rows.length === 0) {
+        lbList.innerHTML = `<p class="leaderboard-empty-message">${t("leaderboard.globalEmpty")}</p>`;
+        return;
+      }
+      lbList.innerHTML = "";
+      rows.forEach((row, i) => {
+        const el = document.createElement("div");
+        el.className = `leaderboard-row${i < 3 ? ` leaderboard-row-top leaderboard-row-rank-${i + 1}` : ""}`;
+        const date = row.played_at
+          ? new Date(row.played_at).toLocaleDateString()
+          : "—";
+        el.innerHTML = `
+          <span>${i + 1}</span>
+          <strong>${row.player_name || "—"}</strong>
+          <span>${row.score}</span>
+          <span><span class="leaderboard-difficulty-chip">${row.difficulty_id || "—"}</span></span>
+          <span>${row.country_code || "—"}</span>
+        `;
+        lbList.appendChild(el);
+      });
+    }
+
+    renderDailyLeaderboardRows(rows) {
+      const lbList = this.elements.leaderboardList;
+      if (!lbList) {
+        return;
+      }
+      if (!rows || rows.length === 0) {
+        lbList.innerHTML = `<p class="leaderboard-empty-message">${t("leaderboard.dailyEmpty")}</p>`;
+        return;
+      }
+      lbList.innerHTML = "";
+      rows.forEach((row, i) => {
+        const el = document.createElement("div");
+        el.className = `leaderboard-row${i < 3 ? ` leaderboard-row-top leaderboard-row-rank-${i + 1}` : ""}`;
+        const date = row.played_at
+          ? new Date(row.played_at).toLocaleDateString()
+          : "—";
+        el.innerHTML = `
+          <span>${i + 1}</span>
+          <strong>${row.player_name || "—"}</strong>
+          <span>${row.score}</span>
+          <span>${row.country_code || "—"}</span>
+          <span>${date}</span>
+        `;
+        lbList.appendChild(el);
+      });
+    }
+
+    renderLeaderboardSummaryFromRows(rows) {
+      const top = rows?.[0];
+      if (this.elements.lbTopScoreValue) {
+        this.elements.lbTopScoreValue.textContent = top?.score ?? "—";
+      }
+      if (this.elements.lbTopPilotValue) {
+        this.elements.lbTopPilotValue.textContent = top?.player_name ?? "—";
+      }
+      if (this.elements.lbTotalEntriesValue) {
+        this.elements.lbTotalEntriesValue.textContent = rows?.length ?? "—";
+      }
+      if (this.elements.lbBestRouteValue) {
+        this.elements.lbBestRouteValue.textContent = top?.difficulty_id ?? "—";
+      }
+    }
+
+    renderLeaderboardPodiumFromRows(rows) {
+      const podium = this.elements.leaderboardPodium;
+      if (!podium) {
+        return;
+      }
+      podium.innerHTML = "";
+      const top3 = (rows || []).slice(0, 3);
+      if (top3.length === 0) {
+        return;
+      }
+      const order = [1, 0, 2].filter((i) => top3[i]);
+      order.forEach((i) => {
+        const row = top3[i];
+        const el = document.createElement("div");
+        el.className = `leaderboard-podium-slot leaderboard-podium-rank-${i + 1}`;
+        el.innerHTML = `
+          <div class="podium-rank">${i + 1}</div>
+          <div class="podium-name">${row.player_name || "—"}</div>
+          <div class="podium-score">${row.score}</div>
+        `;
+        podium.appendChild(el);
+      });
+    }
+
+    // ===== SCORE CARD =====
+
+    async shareScoreCard() {
+      const result = this.state.latestResult;
+      if (!result) {
+        return;
+      }
+      const difficultyDef = this.difficulties.find((d) => d.id === result.difficultyId);
+      const diffLabel = difficultyDef ? t(difficultyDef.labelKey) : result.difficultyId || "Normal";
+      const shareText = format("scorecard.shareText", {
+        score: result.score,
+        difficulty: diffLabel
+      });
+      const method = await ScoreCard.share(
+        {
+          playerName: result.playerName,
+          score: result.score,
+          difficultyLabel: diffLabel,
+          flightLevel: result.flightLevelReached,
+          timestamp: result.timestamp,
+          isDaily: !!result.isDaily
+        },
+        shareText
+      );
+      if (method?.method === "download") {
+        this.enqueueNotification({
+          type: "achievement",
+          title: t("scorecard.shareButton"),
+          message: t("scorecard.downloaded")
+        });
+      }
+    }
+
+    // ===== DAILY CHALLENGE =====
+
+    startDailyChallenge() {
+      const defaultDifficulty = "normal";
+      const playerName = this.normalizePlayerName(
+        this.state.lastSetup?.playerName,
+        this.getDefaultPlayerName()
+      );
+      const setup = {
+        playerName,
+        difficultyId: defaultDifficulty,
+        isDaily: true
+      };
+      this.state.lastSetup = {
+        ...this.state.lastSetup,
+        playerName,
+        difficultyId: defaultDifficulty
+      };
+      Storage.saveLastSetup(this.state.lastSetup);
+      this.loadProfile(playerName);
+      this.startRun(setup);
+    }
+
+    updateDailyButton() {
+      const btn = this.elements.openDailyButton;
+      if (!btn) {
+        return;
+      }
+      const played = Daily.hasPlayedToday();
+      btn.classList.toggle("already-played", played);
+      if (played) {
+        const best = Daily.getTodayBestScore();
+        btn.textContent = format("daily.yourBest", { score: best ?? 0 });
+      } else {
+        btn.textContent = t("daily.button");
+      }
     }
 
     showGameOver(result) {

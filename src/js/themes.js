@@ -3,7 +3,15 @@ window.TurboWingsThemes = (() => {
   const ASSET_ROOT = "./assets/images";
   const SONG_ROOT = "./assets/songs";
 
-  const buildObstacleList = () => [`${ASSET_ROOT}/v1_default_game_obstacle_11.png`];
+  // Obstacle images in flight-level progression order.
+  // Index must stay in sync with OBSTACLE_TOP_INSETS in gameplay.js.
+  const buildObstacleList = () => [
+    `${ASSET_ROOT}/v1_default_game_obstacle_1.png`,   // index 0
+    `${ASSET_ROOT}/v1_default_game_obstacle_3.png`,   // index 1
+    `${ASSET_ROOT}/v1_default_game_obstacle_7.png`,   // index 2
+    `${ASSET_ROOT}/v1_default_game_obstacle_5.png`,   // index 3
+    `${ASSET_ROOT}/v1_default_game_obstacle_11.png`   // index 4
+  ];
 
   const DEFAULT_AUDIO = {
     menu: {

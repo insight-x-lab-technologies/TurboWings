@@ -1,4 +1,4 @@
-const CACHE_VERSION = "turbo-wings-v1";
+const CACHE_VERSION = "turbo-wings-v2";
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -14,6 +14,10 @@ const APP_SHELL_ASSETS = [
   "./js/i18n.js",
   "./js/themes.js",
   "./js/storage.js",
+  "./js/aircraft.js",
+  "./js/online.js",
+  "./js/daily.js",
+  "./js/scorecard.js",
   "./js/progression.js",
   "./js/missions.js",
   "./js/achievements.js",
@@ -36,9 +40,27 @@ const APP_SHELL_ASSETS = [
   "./assets/images/v1_default_game_icon_pause.png",
   "./assets/images/v1_default_game_icon_resume.png",
   "./assets/images/v1_default_game_icon_stop.png",
+  "./assets/images/v1_default_game_icon_ShareScore.png",
+  "./assets/images/v1_default_game_icon_MissionsCompleted.png",
+  "./assets/images/v1_default_game_icon_AchievementsUnlocked.png",
+  "./assets/images/v1_default_game_icon_PlayAgain.png",
+  "./assets/images/v1_default_game_icon_Hangar.png",
+  "./assets/images/v1_default_game_icon_OnLine.png",
+  "./assets/images/v1_default_game_icon_OffLine.png",
+  "./assets/images/v1_default_game_icon_FinalScore.png",
+  "./assets/images/v1_default_game_icon_BestScore.png",
+  "./assets/images/v1_default_game_icon_TimeSurvived.png",
+  "./assets/images/v1_default_game_icon_CoinBank.png",
   "./assets/images/v1_default_game_icon_powerup_shield.png",
   "./assets/images/v1_default_game_icon_powerup_magnet.png",
   "./assets/images/v1_default_game_icon_powerup_slowmotion.png",
+  "./assets/images/jets/v1_default_gameplay_jet_PhantomStrike.png",
+  "./assets/images/jets/v1_default_gameplay_jet_ViperEdge.png",
+  "./assets/images/jets/v1_default_gameplay_jet_StormEagle.png",
+  "./assets/images/jets/v1_default_gameplay_jet_MidnightFury.png",
+  "./assets/images/jets/v1_default_gameplay_jet_SolarFalcon.png",
+  "./assets/images/jets/v1_default_gameplay_jet_NebulaX.png",
+  "./assets/images/jets/v1_default_gameplay_jet_ThunderKing.png",
   "./assets/images/v1_default_game_obstacle_1.png",
   "./assets/images/v1_default_game_obstacle_2.png",
   "./assets/images/v1_default_game_obstacle_3.png",
@@ -56,7 +78,6 @@ const APP_SHELL_ASSETS = [
   "./assets/pwa/icon-maskable-192.png",
   "./assets/pwa/icon-512.png",
   "./assets/pwa/icon-maskable-512.png",
-  "./assets/pwa/screenshot-home-mobile.png",
   "./assets/pwa/screenshot-gameplay-wide.png"
 ];
 

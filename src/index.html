@@ -74,6 +74,15 @@
                   <strong data-i18n="home.controlsValue"></strong>
                 </div>
               </article>
+              <article class="status-chip status-chip-connection" id="homeOnlineChip">
+                <img
+                  id="homeOnlineIcon"
+                  class="status-online-icon"
+                  src="./assets/images/v1_default_game_icon_OffLine.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </article>
             </div>
 
             <aside class="home-utility-rail">
@@ -82,6 +91,10 @@
                 <strong id="homeTopCoinsValue">0</strong>
               </div>
             </aside>
+            <div hidden id="onlineStatusChip" aria-hidden="true">
+              <span id="onlineStatusDot"></span>
+              <span id="onlineStatusLabel"></span>
+            </div>
           </header>
 
           <section class="home-hero-grid">
@@ -109,29 +122,31 @@
                 ></button>
               </div>
 
-              <div class="hero-actions hero-actions-full hero-actions-secondary">
+              <div class="hero-actions hero-actions-full hero-challenge-row">
                 <button
-                  class="button button-secondary"
-                  id="openLeaderboardButton"
+                  class="button button-primary button-challenge"
+                  id="openDailyButton"
                   type="button"
-                  data-i18n="home.leaderboards"
+                  data-i18n="daily.button"
                 ></button>
                 <button
-                  class="button button-secondary"
-                  id="openAchievementsButton"
+                  class="button button-secondary button-challenge"
                   type="button"
-                  data-i18n="home.achievements"
+                  disabled
+                  data-i18n="daily.weeklyChallenge"
                 ></button>
                 <button
-                  class="button button-secondary"
-                  id="openSettingsButton"
+                  class="button button-secondary button-challenge"
                   type="button"
-                  data-i18n="home.settings"
+                  disabled
+                  data-i18n="daily.specialEvent"
                 ></button>
               </div>
+
             </section>
 
-            <aside class="home-profile-card panel">
+            <div class="home-profile-column">
+              <aside class="home-profile-card panel">
               <div class="home-profile-head">
                 <span class="panel-gold-title" data-i18n="home.pilotProfile"></span>
                 <div class="home-profile-ident">
@@ -167,6 +182,34 @@
                 <span id="homeUnlockedValue" hidden></span>
               </div>
             </aside>
+
+            <div class="hero-actions hero-actions-secondary home-secondary-actions">
+              <button
+                class="button button-secondary"
+                id="openLeaderboardButton"
+                type="button"
+                data-i18n="home.leaderboards"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openAchievementsButton"
+                type="button"
+                data-i18n="home.achievements"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openShopButton"
+                type="button"
+                data-i18n="shop.openShop"
+              ></button>
+              <button
+                class="button button-secondary"
+                id="openSettingsButton"
+                type="button"
+                data-i18n="home.settings"
+              ></button>
+            </div>
+          </div>
           </section>
 
           <section class="home-bottom-grid">
@@ -282,30 +325,38 @@
               <article class="setup-feature-card panel">
                 <div class="setup-feature-copy">
                   <span class="mini-label setup-feature-label" data-i18n="setup.featuredShip"></span>
-                  <strong class="setup-feature-name">Turbo Hawk X7</strong>
-                  <span class="setup-feature-class" data-i18n="setup.shipClassBalanced"></span>
+                  <strong class="setup-feature-name" id="setupFeatureName">Turbo Hawk X7</strong>
+                  <span class="setup-feature-class" id="setupFeatureClass"></span>
                   <p class="helper-text" data-i18n="setup.featuredShipHint"></p>
                   <div class="setup-feature-bars" aria-hidden="true">
                     <div class="setup-feature-bar">
                       <span data-i18n="settings.levelSpeed"></span>
-                      <i><b style="width: 62%"></b></i>
+                      <i><b id="setupFeatureSpeedBar" style="width: 62%"></b></i>
                     </div>
                     <div class="setup-feature-bar">
                       <span data-i18n="setup.handling"></span>
-                      <i><b style="width: 48%"></b></i>
+                      <i><b id="setupFeatureHandlingBar" style="width: 48%"></b></i>
                     </div>
                     <div class="setup-feature-bar">
                       <span data-i18n="setup.durability"></span>
-                      <i><b style="width: 70%"></b></i>
+                      <i><b id="setupFeatureDurabilityBar" style="width: 70%"></b></i>
                     </div>
                   </div>
                 </div>
                 <div class="setup-feature-art" aria-hidden="true">
                   <img
                     src="./assets/images/v1_default_gameplay_jet.png"
+                    id="setupFeatureJet"
                     class="setup-feature-jet"
                     alt=""
                   />
+                  <button
+                    class="button button-secondary button-compact setup-change-ship-button"
+                    id="changeAircraftButton"
+                    type="button"
+                    data-i18n="setup.changeAircraft"
+                    aria-hidden="false"
+                  ></button>
                 </div>
               </article>
 
@@ -464,6 +515,23 @@
                     <p class="helper-text" data-i18n="settings.gameplayAudioHint"></p>
                   </div>
                   <input id="gameplayAudioToggle" class="toggle-input" type="checkbox" />
+                  <span class="toggle-visual"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="settings-section-head">
+                <strong data-i18n="online.modeLabel"></strong>
+              </div>
+
+              <div class="toggle-stack">
+                <label class="toggle-card" for="onlineModeToggle">
+                  <div>
+                    <strong data-i18n="online.modeLabel"></strong>
+                    <p class="helper-text" data-i18n="online.modeHint"></p>
+                  </div>
+                  <input id="onlineModeToggle" class="toggle-input" type="checkbox" />
                   <span class="toggle-visual"></span>
                 </label>
               </div>
@@ -868,6 +936,16 @@
                 ></button>
               </div>
 
+              <div class="leaderboard-tabs" id="leaderboardTabs" role="tablist">
+                <button class="lb-tab is-active" id="lbTabLocal" role="tab" data-lb-tab="local" data-i18n="leaderboard.tabLocal"></button>
+                <button class="lb-tab" id="lbTabGlobal" role="tab" data-lb-tab="global" data-i18n="leaderboard.tabGlobal"></button>
+                <button class="lb-tab" id="lbTabDaily" role="tab" data-lb-tab="daily" data-i18n="leaderboard.tabDaily"></button>
+                <label class="lb-country-filter" id="lbCountryFilterLabel" hidden>
+                  <input type="checkbox" id="lbCountryFilter" />
+                  <span data-i18n="leaderboard.filterByCountry"></span>
+                </label>
+              </div>
+
               <div class="leaderboard-summary" id="leaderboardSummary">
                 <article class="stat-card stat-card-points">
                   <span class="stat-label" data-i18n="leaderboard.topScore"></span>
@@ -890,7 +968,7 @@
               <div class="leaderboard-podium" id="leaderboardPodium"></div>
 
               <div class="leaderboard-card">
-                <div class="leaderboard-head">
+                <div class="leaderboard-head" id="leaderboardHead">
                   <span data-i18n="leaderboard.rank"></span>
                   <span data-i18n="leaderboard.player"></span>
                   <span data-i18n="leaderboard.score"></span>
@@ -898,6 +976,7 @@
                   <span data-i18n="leaderboard.date"></span>
                 </div>
                 <div class="leaderboard-list" id="leaderboardList"></div>
+                <div class="leaderboard-loading hidden" id="leaderboardLoading" data-i18n="leaderboard.globalLoading"></div>
               </div>
             </div>
           </div>
@@ -934,6 +1013,7 @@
             <div class="hud-pill hud-pill-wide">
               <span class="hud-label" data-i18n="game.run"></span>
               <strong class="hud-value hud-value-compact" id="runMetaValue">Player 1 - Normal</strong>
+              <span class="hud-daily-badge hidden" id="hudDailyBadge" data-i18n="daily.dailyHudLabel"></span>
             </div>
             <div class="hud-effects" id="activeEffectsList"></div>
           </div>
@@ -1026,11 +1106,11 @@
                   <span class="stat-label" data-i18n="game.obstaclesPassed"></span>
                   <strong class="summary-value" id="gameOverObstaclesValue">0</strong>
                 </article>
-                <article class="summary-block">
+                <article class="summary-block summary-block-game-over-missions">
                   <span class="stat-label" data-i18n="game.missionsCompleted"></span>
                   <strong class="summary-value" id="gameOverMissionsCountValue">0</strong>
                 </article>
-                <article class="summary-block">
+                <article class="summary-block summary-block-game-over-achievements">
                   <span class="stat-label" data-i18n="game.achievementsUnlocked"></span>
                   <strong class="summary-value" id="gameOverAchievementsCountValue">0</strong>
                 </article>
@@ -1056,6 +1136,12 @@
                 ></button>
                 <button
                   class="button button-secondary"
+                  id="shareScoreCardButton"
+                  type="button"
+                  data-i18n="scorecard.shareButton"
+                ></button>
+                <button
+                  class="button button-secondary"
                   id="changeSetupButton"
                   type="button"
                   data-i18n="game.changeSetup"
@@ -1071,6 +1157,39 @@
           </div>
         </div>
       </section>
+      <section class="screen screen-panel" id="shopScreen" data-screen="shop" hidden>
+        <div class="scene scene-alt" aria-hidden="true">
+          <div class="scene-sun"></div>
+          <div class="scene-cloud cloud-a"></div>
+          <div class="scene-cloud cloud-b"></div>
+          <div class="scene-buildings back"></div>
+          <div class="scene-buildings front"></div>
+        </div>
+
+        <section class="panel-shell panel shop-shell">
+          <div class="screen-titlebar">
+            <div class="section-heading">
+              <span class="eyebrow" data-i18n="shop.eyebrow"></span>
+              <h2 data-i18n="shop.title"></h2>
+              <p data-i18n="shop.subtitle"></p>
+            </div>
+            <div class="shop-titlebar-right">
+              <div class="coin-bank-chip panel shop-coin-display">
+                <span class="coin-bank-icon" aria-hidden="true"></span>
+                <strong id="shopCoinBalance">0</strong>
+              </div>
+              <button
+                class="button button-secondary button-compact"
+                id="backFromShopButton"
+                type="button"
+                data-i18n="shop.back"
+              ></button>
+            </div>
+          </div>
+
+          <div class="shop-grid" id="shopAircraftGrid"></div>
+        </section>
+      </section>
     </div>
 
     <div class="notification-stack" id="notificationStack" aria-live="polite" aria-atomic="true"></div>
@@ -1078,6 +1197,10 @@
     <script src="./js/i18n.js" defer></script>
     <script src="./js/themes.js" defer></script>
     <script src="./js/storage.js" defer></script>
+    <script src="./js/aircraft.js" defer></script>
+    <script src="./js/online.js" defer></script>
+    <script src="./js/daily.js" defer></script>
+    <script src="./js/scorecard.js" defer></script>
     <script src="./js/progression.js" defer></script>
     <script src="./js/missions.js" defer></script>
     <script src="./js/achievements.js" defer></script>

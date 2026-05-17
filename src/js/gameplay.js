@@ -91,6 +91,19 @@ window.TurboWingsGameplay = (() => {
     { type: "crane", minFlightLevel: 4, weight: 3 }
   ];
 
+  // ─── OBSTACLE IMAGE CROP (top inset) ─────────────────────────────────────
+  // Fraction of the source image height to SKIP at the antenna/spire tip.
+  // Applied only when DRAWING — collision boundaries stay at gapTop/gapBottom
+  // unchanged, so game difficulty is not affected.
+  // Index matches buildObstacleList() in themes.js:
+  //   0 → v1_default_game_obstacle_1.png   (5 %)
+  //   1 → v1_default_game_obstacle_3.png   (5 %)
+  //   2 → v1_default_game_obstacle_7.png   (3 %)
+  //   3 → v1_default_game_obstacle_5.png   (9 %)
+  //   4 → v1_default_game_obstacle_11.png  (3 %)
+  const OBSTACLE_TOP_INSETS = [0.05, 0.05, 0.03, 0.09, 0.03];
+  // ─────────────────────────────────────────────────────────────────────────
+
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
   }
@@ -423,8 +436,10 @@ window.TurboWingsGameplay = (() => {
       difficultyId = DEFAULT_DIFFICULTY_ID,
       tuning = {},
       themeId = "default",
-      features = {}
+      features = {},
+      rng = null
     } = {}) {
+      this.rng = typeof rng === "function" ? rng : Math.random.bind(Math);
       this.isInteractive = true;
       this.activeThemeId = themeId;
       this.preloadThemeAssets(themeId);
@@ -568,7 +583,7 @@ window.TurboWingsGameplay = (() => {
       this.spawnCooldown -= delta;
       if (this.spawnCooldown <= 0) {
         this.spawnObstacle(difficultyState);
-        this.spawnCooldown = difficultyState.spawnDelay * (0.92 + Math.random() * 0.16);
+        this.spawnCooldown = difficultyState.spawnDelay * (0.92 + this.rng() * 0.16);
       }
 
       this.updateObstacles(delta, worldSpeed);
@@ -920,7 +935,7 @@ window.TurboWingsGameplay = (() => {
         (variant) => flightLevel >= variant.minFlightLevel
       );
       const totalWeight = candidates.reduce((sum, variant) => sum + variant.weight, 0);
-      let cursor = Math.random() * totalWeight;
+      let cursor = this.rng() * totalWeight;
 
       for (const variant of candidates) {
         cursor -= variant.weight;
@@ -942,7 +957,7 @@ window.TurboWingsGameplay = (() => {
         availableCount - 1,
         Math.floor((Math.max(1, flightLevel) - 1) * 2.5)
       );
-      return Math.floor(Math.random() * (maxAssetIndex + 1));
+      return Math.floor(this.rng() * (maxAssetIndex + 1));
     }
 
     spawnObstacle(difficultyState) {
@@ -951,8 +966,8 @@ window.TurboWingsGameplay = (() => {
       const gapSize = difficultyState.gapSize;
       const maxGapCenter = this.height - paddingBottom - gapSize * 0.5;
       const minGapCenter = paddingTop + gapSize * 0.5;
-      const gapCenter = minGapCenter + Math.random() * Math.max(24, maxGapCenter - minGapCenter);
-      const obstacleX = this.width + this.obstacleWidth + Math.random() * 34;
+      const gapCenter = minGapCenter + this.rng() * Math.max(24, maxGapCenter - minGapCenter);
+      const obstacleX = this.width + this.obstacleWidth + this.rng() * 34;
 
       const obstacle = {
         x: obstacleX,
@@ -960,8 +975,8 @@ window.TurboWingsGameplay = (() => {
         gapY: gapCenter,
         gapHeight: gapSize,
         scored: false,
-        phase: Math.random() * Math.PI * 2,
-        accentOffset: Math.random() * 20,
+        phase: this.rng() * Math.PI * 2,
+        accentOffset: this.rng() * 20,
         topStyle: this.pickObstacleVariant(difficultyState.flightLevel),
         bottomStyle: this.pickObstacleVariant(difficultyState.flightLevel),
         topAssetIndex: this.pickObstacleAssetIndex(difficultyState.flightLevel),
@@ -980,22 +995,22 @@ window.TurboWingsGameplay = (() => {
       const minY = obstacle.gapY - obstacle.gapHeight * 0.5 + safeMargin;
       const maxY = obstacle.gapY + obstacle.gapHeight * 0.5 - safeMargin;
 
-      if (difficultyState.flightLevel >= 2 && Math.random() < 0.32) {
+      if (difficultyState.flightLevel >= 2 && this.rng() < 0.32) {
         obstacle.veils.push({
-          offsetX: obstacle.width * (0.22 + Math.random() * 0.26),
-          y: minY + (maxY - minY) * (0.22 + Math.random() * 0.56),
-          width: 90 + Math.random() * 34,
-          height: 34 + Math.random() * 14,
-          phase: Math.random() * Math.PI * 2,
-          phaseSpeed: 0.5 + Math.random() * 0.3,
-          driftAmplitude: 8 + Math.random() * 5,
+          offsetX: obstacle.width * (0.22 + this.rng() * 0.26),
+          y: minY + (maxY - minY) * (0.22 + this.rng() * 0.56),
+          width: 90 + this.rng() * 34,
+          height: 34 + this.rng() * 14,
+          phase: this.rng() * Math.PI * 2,
+          phaseSpeed: 0.5 + this.rng() * 0.3,
+          driftAmplitude: 8 + this.rng() * 5,
           offsetY: 0,
-          alpha: 0.22 + Math.random() * 0.1
+          alpha: 0.22 + this.rng() * 0.1
         });
       }
 
       const hazardChance = difficultyState.flightLevel >= 5 ? 0.34 : difficultyState.flightLevel >= 3 ? 0.26 : 0.16;
-      if (difficultyState.flightLevel < 2 || Math.random() >= hazardChance) {
+      if (difficultyState.flightLevel < 2 || this.rng() >= hazardChance) {
         return;
       }
 
@@ -1007,31 +1022,31 @@ window.TurboWingsGameplay = (() => {
         available.push("drone");
       }
 
-      const type = available[Math.floor(Math.random() * available.length)];
+      const type = available[Math.floor(this.rng() * available.length)];
       if (type === "balloon") {
         obstacle.hazards.push({
           type,
-          offsetX: obstacle.width * 0.5 + 18 + Math.random() * 18,
-          baseY: minY + Math.random() * Math.max(24, maxY - minY),
+          offsetX: obstacle.width * 0.5 + 18 + this.rng() * 18,
+          baseY: minY + this.rng() * Math.max(24, maxY - minY),
           currentY: obstacle.gapY,
           radius: 17,
-          phase: Math.random() * Math.PI * 2,
-          phaseSpeed: 1.2 + Math.random() * 0.4,
-          bobAmplitude: 16 + Math.random() * 10,
+          phase: this.rng() * Math.PI * 2,
+          phaseSpeed: 1.2 + this.rng() * 0.4,
+          bobAmplitude: 16 + this.rng() * 10,
           swayAmplitude: 0
         });
       } else {
         obstacle.hazards.push({
           type,
-          offsetX: obstacle.width * 0.48 + 16 + Math.random() * 24,
-          baseY: minY + Math.random() * Math.max(30, maxY - minY),
+          offsetX: obstacle.width * 0.48 + 16 + this.rng() * 24,
+          baseY: minY + this.rng() * Math.max(30, maxY - minY),
           currentY: obstacle.gapY,
           width: 30,
           height: 16,
-          phase: Math.random() * Math.PI * 2,
-          phaseSpeed: 1.8 + Math.random() * 0.5,
-          bobAmplitude: 10 + Math.random() * 6,
-          swayAmplitude: 14 + Math.random() * 8
+          phase: this.rng() * Math.PI * 2,
+          phaseSpeed: 1.8 + this.rng() * 0.5,
+          bobAmplitude: 10 + this.rng() * 6,
+          swayAmplitude: 14 + this.rng() * 8
         });
       }
     }
@@ -1045,11 +1060,11 @@ window.TurboWingsGameplay = (() => {
         return;
       }
 
-      if (this.featureFlags.coinsEnabled && Math.random() < 0.74) {
-        const coinCount = 2 + Math.floor(Math.random() * 4);
+      if (this.featureFlags.coinsEnabled && this.rng() < 0.74) {
+        const coinCount = 2 + Math.floor(this.rng() * 4);
         const riskBias = obstacle.hazards.length
-          ? (Math.random() < 0.5 ? -1 : 1) * Math.min(30, obstacle.gapHeight * 0.16)
-          : (Math.random() - 0.5) * obstacle.gapHeight * 0.42;
+          ? (this.rng() < 0.5 ? -1 : 1) * Math.min(30, obstacle.gapHeight * 0.16)
+          : (this.rng() - 0.5) * obstacle.gapHeight * 0.42;
         const centerY = clamp(obstacle.gapY + riskBias, minY, maxY);
         const waveAmplitude = Math.min(26, obstacle.gapHeight * 0.12);
 
@@ -1065,17 +1080,17 @@ window.TurboWingsGameplay = (() => {
             x,
             y,
             radius: 11,
-            phase: Math.random() * Math.PI * 2,
-            glint: Math.random() * Math.PI * 2
+            phase: this.rng() * Math.PI * 2,
+            glint: this.rng() * Math.PI * 2
           });
         }
       }
 
-      if (this.featureFlags.powerUpsEnabled && this.powerupCooldown <= 0 && Math.random() < 0.16) {
+      if (this.featureFlags.powerUpsEnabled && this.powerupCooldown <= 0 && this.rng() < 0.16) {
         const powerupTypes = ["shield", "magnet", "slow"];
-        const type = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
+        const type = powerupTypes[Math.floor(this.rng() * powerupTypes.length)];
         const powerupX = obstacle.x + obstacle.width * 0.58;
-        let powerupY = minY + Math.random() * (maxY - minY);
+        let powerupY = minY + this.rng() * (maxY - minY);
 
         if (this.isPointNearHazard(obstacle, powerupX, powerupY, 30)) {
           powerupY = clamp(obstacle.gapY + (powerupY < obstacle.gapY ? 34 : -34), minY, maxY);
@@ -1086,10 +1101,10 @@ window.TurboWingsGameplay = (() => {
           y: powerupY,
           radius: 15,
           type,
-          phase: Math.random() * Math.PI * 2
+          phase: this.rng() * Math.PI * 2
         });
 
-        this.powerupCooldown = 5.4 + Math.random() * 2.8;
+        this.powerupCooldown = 5.4 + this.rng() * 2.8;
       }
     }
 
@@ -1499,7 +1514,12 @@ window.TurboWingsGameplay = (() => {
         const bottomImage = this.themeAssets.obstacles[obstacle.bottomAssetIndex];
 
         if (topImage?.complete && topImage.naturalWidth) {
-          this.drawObstacleImage(obstacle.x, 0, obstacle.width, gapTop, topImage, true);
+          const topInset = OBSTACLE_TOP_INSETS[obstacle.topAssetIndex] ?? 0;
+          this.ctx.save();
+          this.ctx.fillStyle = theme.obstacleMain;
+          this.ctx.fillRect(obstacle.x, 0, obstacle.width, gapTop);
+          this.ctx.restore();
+          this.drawObstacleImage(obstacle.x, 0, obstacle.width, gapTop, topImage, true, topInset);
         } else {
           this.drawTower(
             obstacle.x,
@@ -1514,12 +1534,19 @@ window.TurboWingsGameplay = (() => {
         }
 
         if (bottomImage?.complete && bottomImage.naturalWidth) {
+          const bottomInset = OBSTACLE_TOP_INSETS[obstacle.bottomAssetIndex] ?? 0;
+          this.ctx.save();
+          this.ctx.fillStyle = theme.obstacleMain;
+          this.ctx.fillRect(obstacle.x, gapBottom, obstacle.width, this.height - gapBottom);
+          this.ctx.restore();
           this.drawObstacleImage(
             obstacle.x,
-            this.height - (this.height - gapBottom),
+            gapBottom,
             obstacle.width,
             this.height - gapBottom,
-            bottomImage
+            bottomImage,
+            false,
+            bottomInset
           );
         } else {
           this.drawTower(
@@ -1536,7 +1563,7 @@ window.TurboWingsGameplay = (() => {
       }
     }
 
-    drawObstacleImage(x, y, width, height, image, flipY = false) {
+    drawObstacleImage(x, y, width, height, image, flipY = false, topInsetRatio = 0) {
       if (height <= 0 || !image?.naturalWidth || !image?.naturalHeight) {
         return;
       }
@@ -1544,7 +1571,10 @@ window.TurboWingsGameplay = (() => {
       const ctx = this.ctx;
       const naturalHeight = width * (image.naturalHeight / image.naturalWidth);
       const cropRatio = Math.min(1, height / naturalHeight);
-      const sourceHeight = image.naturalHeight * cropRatio;
+      const fullSourceH = image.naturalHeight * cropRatio;
+      const skipPx = Math.round(image.naturalHeight * topInsetRatio);
+      const sourceY = skipPx;
+      const sourceH = Math.max(1, fullSourceH - skipPx);
 
       ctx.save();
       ctx.shadowColor = "rgba(0, 0, 0, 0.34)";
@@ -1555,17 +1585,13 @@ window.TurboWingsGameplay = (() => {
         ctx.rotate(Math.PI);
         ctx.drawImage(
           image,
-          0,
-          0,
-          image.naturalWidth,
-          sourceHeight,
-          -width * 0.5,
-          -height * 0.5,
-          width,
-          height
+          0, sourceY,
+          image.naturalWidth, sourceH,
+          -width * 0.5, -height * 0.5,
+          width, height
         );
       } else {
-        ctx.drawImage(image, 0, 0, image.naturalWidth, sourceHeight, x, y, width, height);
+        ctx.drawImage(image, 0, sourceY, image.naturalWidth, sourceH, x, y, width, height);
       }
       ctx.restore();
     }

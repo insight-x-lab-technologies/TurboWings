@@ -35,6 +35,15 @@
   --game-icon-level-23: url("../assets/images/v1_default_game_icon_level_2-3.png");
   --game-icon-level-4: url("../assets/images/v1_default_game_icon_level_4.png");
   --game-icon-level-5: url("../assets/images/v1_default_game_icon_level_5.png");
+  --game-icon-final-score: url("../assets/images/v1_default_game_icon_FinalScore.png");
+  --game-icon-best-score: url("../assets/images/v1_default_game_icon_BestScore.png");
+  --game-icon-coin-bank: url("../assets/images/v1_default_game_icon_CoinBank.png");
+  --game-icon-time-survived: url("../assets/images/v1_default_game_icon_TimeSurvived.png");
+  --game-icon-missions-completed: url("../assets/images/v1_default_game_icon_MissionsCompleted.png");
+  --game-icon-achievements-unlocked: url("../assets/images/v1_default_game_icon_AchievementsUnlocked.png");
+  --game-icon-play-again: url("../assets/images/v1_default_game_icon_PlayAgain.png");
+  --game-icon-share-score: url("../assets/images/v1_default_game_icon_ShareScore.png");
+  --game-icon-hangar: url("../assets/images/v1_default_game_icon_Hangar.png");
 }
 
 body.theme-default {
