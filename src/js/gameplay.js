@@ -100,7 +100,7 @@ window.TurboWingsGameplay = (() => {
   //   2 → v1_default_game_obstacle_7.png   (3 %)
   //   3 → v1_default_game_obstacle_5.png   (9 %)
   //   4 → v1_default_game_obstacle_11.png  (3 %)
-  const OBSTACLE_TOP_INSETS = [0.05, 0.05, 0.03, 0.09, 0.03];
+  const OBSTACLE_TOP_INSETS = [0.10, 0.15, 0.06, 0.15, 0.06];
   // ─────────────────────────────────────────────────────────────────────────
 
   function clamp(value, min, max) {
