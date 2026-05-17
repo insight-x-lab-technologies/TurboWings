@@ -9,7 +9,7 @@ window.TurboWingsOnline = (() => {
   const COUNTRY_CACHE_KEY = "turbo-wings-country-cache";
 
   function isOnlineModeEnabled() {
-    return window.localStorage.getItem(ONLINE_MODE_KEY) === "true";
+    return window.localStorage.getItem(ONLINE_MODE_KEY) !== "false";
   }
 
   function setOnlineMode(enabled) {

@@ -91,10 +91,9 @@ window.TurboWingsGameplay = (() => {
     { type: "crane", minFlightLevel: 4, weight: 3 }
   ];
 
-  // ─── OBSTACLE IMAGE CROP (top inset) ─────────────────────────────────────
-  // Fraction of the source image height to SKIP at the antenna/spire tip.
-  // Applied only when DRAWING — collision boundaries stay at gapTop/gapBottom
-  // unchanged, so game difficulty is not affected.
+  // ─── OBSTACLE COLLISION TOP INSET ────────────────────────────────────────
+  // Fraction of the rendered obstacle height ignored near the image tip.
+  // The obstacle image is drawn whole; only the collision rectangle is inset.
   // Index matches buildObstacleList() in themes.js:
   //   0 → v1_default_game_obstacle_1.png   (5 %)
   //   1 → v1_default_game_obstacle_3.png   (5 %)
@@ -1136,6 +1135,21 @@ window.TurboWingsGameplay = (() => {
       };
     }
 
+    getObstacleCollisionBands(obstacle) {
+      const gapTop = obstacle.gapY - obstacle.gapHeight * 0.5;
+      const gapBottom = obstacle.gapY + obstacle.gapHeight * 0.5;
+      const topInsetRatio = OBSTACLE_TOP_INSETS[obstacle.topAssetIndex] ?? 0;
+      const bottomInsetRatio = OBSTACLE_TOP_INSETS[obstacle.bottomAssetIndex] ?? 0;
+      const bottomHeight = Math.max(0, this.height - gapBottom);
+
+      return {
+        gapTop,
+        gapBottom,
+        topCollisionBottom: Math.max(0, gapTop - gapTop * topInsetRatio),
+        bottomCollisionTop: Math.min(this.height, gapBottom + bottomHeight * bottomInsetRatio)
+      };
+    }
+
     getCollision() {
       const hitbox = this.getPlaneHitbox();
 
@@ -1160,10 +1174,10 @@ window.TurboWingsGameplay = (() => {
           hitbox.x + hitbox.width > obstacle.x && hitbox.x < obstacle.x + obstacle.width;
 
         if (collidesHorizontally) {
-          const gapTop = obstacle.gapY - obstacle.gapHeight * 0.5;
-          const gapBottom = obstacle.gapY + obstacle.gapHeight * 0.5;
-          const hitsTop = hitbox.y < gapTop;
-          const hitsBottom = hitbox.y + hitbox.height > gapBottom;
+          const { topCollisionBottom, bottomCollisionTop } =
+            this.getObstacleCollisionBands(obstacle);
+          const hitsTop = hitbox.y < topCollisionBottom;
+          const hitsBottom = hitbox.y + hitbox.height > bottomCollisionTop;
           if (hitsTop || hitsBottom) {
             return { kind: hitsTop ? "obstacle-top" : "obstacle-bottom", obstacle, hitbox };
           }
@@ -1233,11 +1247,11 @@ window.TurboWingsGameplay = (() => {
       }
 
       if (collision.obstacle) {
-        const gapTop = collision.obstacle.gapY - collision.obstacle.gapHeight * 0.5;
-        const gapBottom = collision.obstacle.gapY + collision.obstacle.gapHeight * 0.5;
+        const { topCollisionBottom, bottomCollisionTop } =
+          this.getObstacleCollisionBands(collision.obstacle);
         return {
           x: Math.max(collision.obstacle.x, Math.min(hitbox.x + hitbox.width, collision.obstacle.x + collision.obstacle.width)),
-          y: collision.kind === "obstacle-top" ? gapTop : gapBottom
+          y: collision.kind === "obstacle-top" ? topCollisionBottom : bottomCollisionTop
         };
       }
 
@@ -1366,12 +1380,17 @@ window.TurboWingsGameplay = (() => {
       ctx.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
 
       for (const obstacle of this.obstacles) {
-        const gapTop = obstacle.gapY - obstacle.gapHeight * 0.5;
-        const gapBottom = obstacle.gapY + obstacle.gapHeight * 0.5;
+        const { topCollisionBottom, bottomCollisionTop } =
+          this.getObstacleCollisionBands(obstacle);
 
         ctx.strokeStyle = "rgba(255, 143, 78, 0.95)";
-        ctx.strokeRect(obstacle.x, 0, obstacle.width, gapTop);
-        ctx.strokeRect(obstacle.x, gapBottom, obstacle.width, this.height - gapBottom);
+        ctx.strokeRect(obstacle.x, 0, obstacle.width, topCollisionBottom);
+        ctx.strokeRect(
+          obstacle.x,
+          bottomCollisionTop,
+          obstacle.width,
+          this.height - bottomCollisionTop
+        );
 
         for (const hazard of obstacle.hazards) {
           const hazardX = obstacle.x + hazard.offsetX + (hazard.swayX || 0);
@@ -1514,12 +1533,7 @@ window.TurboWingsGameplay = (() => {
         const bottomImage = this.themeAssets.obstacles[obstacle.bottomAssetIndex];
 
         if (topImage?.complete && topImage.naturalWidth) {
-          const topInset = OBSTACLE_TOP_INSETS[obstacle.topAssetIndex] ?? 0;
-          this.ctx.save();
-          this.ctx.fillStyle = theme.obstacleMain;
-          this.ctx.fillRect(obstacle.x, 0, obstacle.width, gapTop);
-          this.ctx.restore();
-          this.drawObstacleImage(obstacle.x, 0, obstacle.width, gapTop, topImage, true, topInset);
+          this.drawObstacleImage(obstacle.x, 0, obstacle.width, gapTop, topImage, true);
         } else {
           this.drawTower(
             obstacle.x,
@@ -1534,19 +1548,13 @@ window.TurboWingsGameplay = (() => {
         }
 
         if (bottomImage?.complete && bottomImage.naturalWidth) {
-          const bottomInset = OBSTACLE_TOP_INSETS[obstacle.bottomAssetIndex] ?? 0;
-          this.ctx.save();
-          this.ctx.fillStyle = theme.obstacleMain;
-          this.ctx.fillRect(obstacle.x, gapBottom, obstacle.width, this.height - gapBottom);
-          this.ctx.restore();
           this.drawObstacleImage(
             obstacle.x,
             gapBottom,
             obstacle.width,
             this.height - gapBottom,
             bottomImage,
-            false,
-            bottomInset
+            false
           );
         } else {
           this.drawTower(
@@ -1563,18 +1571,12 @@ window.TurboWingsGameplay = (() => {
       }
     }
 
-    drawObstacleImage(x, y, width, height, image, flipY = false, topInsetRatio = 0) {
+    drawObstacleImage(x, y, width, height, image, flipY = false) {
       if (height <= 0 || !image?.naturalWidth || !image?.naturalHeight) {
         return;
       }
 
       const ctx = this.ctx;
-      const naturalHeight = width * (image.naturalHeight / image.naturalWidth);
-      const cropRatio = Math.min(1, height / naturalHeight);
-      const fullSourceH = image.naturalHeight * cropRatio;
-      const skipPx = Math.round(image.naturalHeight * topInsetRatio);
-      const sourceY = skipPx;
-      const sourceH = Math.max(1, fullSourceH - skipPx);
 
       ctx.save();
       ctx.shadowColor = "rgba(0, 0, 0, 0.34)";
@@ -1585,13 +1587,13 @@ window.TurboWingsGameplay = (() => {
         ctx.rotate(Math.PI);
         ctx.drawImage(
           image,
-          0, sourceY,
-          image.naturalWidth, sourceH,
+          0, 0,
+          image.naturalWidth, image.naturalHeight,
           -width * 0.5, -height * 0.5,
           width, height
         );
       } else {
-        ctx.drawImage(image, 0, sourceY, image.naturalWidth, sourceH, x, y, width, height);
+        ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, x, y, width, height);
       }
       ctx.restore();
     }

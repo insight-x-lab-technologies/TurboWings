@@ -117,7 +117,6 @@ window.TurboWingsApplication = (() => {
         openSettingsButton: document.getElementById("openSettingsButton"),
         openAdvancedSettingsButton: document.getElementById("openAdvancedSettingsButton"),
         openAchievementsButton: document.getElementById("openAchievementsButton"),
-        openAchievementsPanelButton: document.getElementById("openAchievementsPanelButton"),
         backFromSetupButton: document.getElementById("backFromSetupButton"),
         backFromSettingsButton: document.getElementById("backFromSettingsButton"),
         backFromAdvancedSettingsButton: document.getElementById("backFromAdvancedSettingsButton"),
@@ -243,8 +242,7 @@ window.TurboWingsApplication = (() => {
         lbCountryFilter: document.getElementById("lbCountryFilter"),
         lbCountryFilterLabel: document.getElementById("lbCountryFilterLabel"),
         leaderboardLoading: document.getElementById("leaderboardLoading"),
-        hudDailyBadge: document.getElementById("hudDailyBadge"),
-        onlineModeToggle: document.getElementById("onlineModeToggle")
+        hudDailyBadge: document.getElementById("hudDailyBadge")
       };
 
       this.elements.difficultySettingsLists = [
@@ -340,6 +338,7 @@ window.TurboWingsApplication = (() => {
       this.refreshUi();
       this.showScreen("home", { playNavigation: false });
       this.applyQueryOverrides();
+      Online.setOnlineMode(true);
       this.initOnline();
     }
 
@@ -513,11 +512,6 @@ window.TurboWingsApplication = (() => {
       });
 
       this.elements.openAchievementsButton.addEventListener("click", () => {
-        this.handleInteraction();
-        this.showScreen("achievements");
-      });
-
-      this.elements.openAchievementsPanelButton.addEventListener("click", () => {
         this.handleInteraction();
         this.showScreen("achievements");
       });
@@ -702,18 +696,6 @@ window.TurboWingsApplication = (() => {
       this.bindBooleanSettingToggle("powerUpsToggle", "powerUpsEnabled");
       this.bindBooleanSettingToggle("coinsToggle", "coinsEnabled");
       this.bindBooleanSettingToggle("effectsToggle", "effectsEnabled");
-
-      this.elements.onlineModeToggle?.addEventListener("change", () => {
-        const enabled = !!this.elements.onlineModeToggle.checked;
-        Online.setOnlineMode(enabled);
-        if (enabled) {
-          this.initOnline();
-        } else {
-          this.state.onlinePlayer = null;
-          this.state.countryInfo = null;
-          this.updateOnlineStatus("offline");
-        }
-      });
 
       this.elements.playerNameInput.addEventListener("input", (event) => {
         const value = String(event.target.value || "").slice(0, 24);
@@ -1114,9 +1096,6 @@ window.TurboWingsApplication = (() => {
       this.elements.powerUpsToggle.checked = this.state.settings.powerUpsEnabled;
       this.elements.coinsToggle.checked = this.state.settings.coinsEnabled;
       this.elements.effectsToggle.checked = this.state.settings.effectsEnabled;
-      if (this.elements.onlineModeToggle) {
-        this.elements.onlineModeToggle.checked = Online.isOnlineModeEnabled();
-      }
     }
 
     renderDifficultyCards() {
@@ -1362,7 +1341,11 @@ window.TurboWingsApplication = (() => {
     renderMissionCard(mission) {
       const progressRatio = Math.min(1, mission.progress / mission.objective);
       const statusLabel =
-        mission.status === "completed" ? t("missions.completed") : t("missions.active");
+        mission.status === "completed"
+          ? t("missions.completed")
+          : mission.status === "claimed"
+          ? t("missions.claimed")
+          : t("missions.active");
       const progressText = format("missions.progress", {
         progress: Math.floor(mission.progress),
         objective: mission.objective
@@ -1388,7 +1371,9 @@ window.TurboWingsApplication = (() => {
                 ? `<button class="button button-primary button-compact" type="button" data-claim-mission="${mission.id}">${t(
                     "missions.claim"
                   )}</button>`
-                : ""
+                : `<button class="button button-secondary button-compact" type="button" disabled>${t(
+                    mission.status === "claimed" ? "missions.claimed" : "missions.claim"
+                  )}</button>`
             }
           </div>
         </article>
@@ -2560,10 +2545,6 @@ window.TurboWingsApplication = (() => {
             <div class="shop-card-bar">
               <span>${t("shop.statHandling")}</span>
               <div class="shop-card-bar-track"><div class="shop-card-bar-fill" style="width:${ac.handling}%"></div></div>
-            </div>
-            <div class="shop-card-bar">
-              <span>${t("shop.statDurability")}</span>
-              <div class="shop-card-bar-track"><div class="shop-card-bar-fill" style="width:${ac.durability}%"></div></div>
             </div>
           </div>
           <div class="shop-card-action">${actionHtml}</div>

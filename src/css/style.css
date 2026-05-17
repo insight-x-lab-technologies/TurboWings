@@ -1215,9 +1215,14 @@ select {
 }
 
 .mission-card-completed,
+.mission-card-claimed,
 .achievement-card.unlocked {
   background: linear-gradient(180deg, rgba(255, 189, 114, 0.08), rgba(255, 255, 255, 0.03));
   border-color: rgba(255, 181, 110, 0.24);
+}
+
+.mission-card-claimed {
+  opacity: 0.78;
 }
 
 .achievement-card.locked {
@@ -2476,7 +2481,7 @@ body[data-display-mode="desktop"] .home-topbar {
 
 body[data-display-mode="desktop"] .home-status-strip,
 body[data-display-mode="tablet"] .home-status-strip {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(2.6rem, 0.44fr);
 }
 
 body[data-display-mode="desktop"] .home-hero-grid {
@@ -2596,6 +2601,7 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .topbar-lev
 }
 
 body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-status-strip {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(2.6rem, 0.44fr);
   padding: 0.33rem 0.68rem;
   gap: 0.3rem;
 }
@@ -2604,6 +2610,10 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .status-chi
   min-height: 2.18rem;
   padding: 0.22rem 0.4rem;
   gap: 0.36rem;
+}
+
+body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .status-chip-connection {
+  padding-inline: 0.18rem;
 }
 
 body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .status-chip div {
@@ -2792,6 +2802,11 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-achie
   gap: 0.28rem;
 }
 
+body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-missions-panel .mission-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+}
+
 @media (min-width: 600px) {
   body[data-display-mode="auto"] .home-brand-panel {
     --home-secondary-gap: 0.75rem;
@@ -2845,6 +2860,7 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-achie
   }
 
   body[data-display-mode="auto"] .home-status-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(2.6rem, 0.44fr);
     padding: 0.33rem 0.68rem;
     gap: 0.3rem;
   }
@@ -2853,6 +2869,10 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-achie
     min-height: 2.18rem;
     padding: 0.22rem 0.4rem;
     gap: 0.36rem;
+  }
+
+  body[data-display-mode="auto"] .status-chip-connection {
+    padding-inline: 0.18rem;
   }
 
   body[data-display-mode="auto"] .status-chip div {
@@ -3039,6 +3059,11 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-achie
     height: 100%;
     padding: 0.68rem 0.75rem;
     gap: 0.28rem;
+  }
+
+  body[data-display-mode="auto"] .home-missions-panel .mission-card {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
   }
 }
 
@@ -3985,11 +4010,6 @@ body:is([data-display-mode="desktop"], [data-display-mode="tablet"]) .home-achie
     align-items: start;
   }
 
-body:not([data-display-mode="mobile"]) #openAchievementsPanelButton {
-  min-height: 1.5rem;
-  padding-inline: 0.5rem;
-  font-size: 0.34rem;
-}
 }
 
 .home-brand-lockup {
@@ -5000,12 +5020,6 @@ body:not([data-display-mode="mobile"]) .hero-actions-secondary .button {
 
 body:not([data-display-mode="mobile"]) .home-bottom-grid {
   margin-top: -1.4rem;
-}
-
-body:not([data-display-mode="mobile"]) #openAchievementsPanelButton {
-  min-height: 1rem;
-  padding-inline: 0.36rem;
-  font-size: 0.26rem;
 }
 
 body[data-display-mode="tablet"] .achievements-overview,
@@ -6796,8 +6810,20 @@ body:not([data-display-mode="mobile"]) .hero-challenge-row {
 }
 
 body:not([data-display-mode="mobile"]) .button-challenge {
-  min-height: 3.45rem;
-  font-size: 0.9rem;
+  min-height: 2.55rem;
+  padding: 0.42rem 0.62rem;
+  font-size: 0.72rem;
+  line-height: 1.12;
+  white-space: normal;
+  text-align: center;
+}
+
+body:not([data-display-mode="mobile"]) .home-secondary-actions .button {
+  min-height: 2.25rem;
+  padding: 0.36rem 0.32rem;
+  font-size: 0.64rem;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
 }
 
 /* ===== CUSTOM SCROLLBAR ===== */
@@ -6980,8 +7006,10 @@ body:not([data-display-mode="mobile"]) .button-challenge {
 
 .shop-card-action .button {
   width: 100%;
-  padding: 0.55rem 0.75rem;
-  font-size: 0.8rem;
+  min-height: 2.15rem;
+  padding: 0.34rem 0.62rem;
+  font-size: 0.72rem;
+  line-height: 1.12;
 }
 
 .shop-card-action .button-primary {
