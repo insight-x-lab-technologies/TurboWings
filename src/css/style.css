@@ -4760,10 +4760,14 @@ body:not([data-display-mode="mobile"]) .game-over-actions {
 
 body:not([data-display-mode="mobile"]) .game-over-actions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 body:not([data-display-mode="mobile"]) .game-over-columns {
+  display: none;
+}
+
+body:not([data-display-mode="mobile"]) #gameOverHomeButton {
   display: none;
 }
 
