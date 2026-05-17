@@ -60,7 +60,7 @@ window.TurboWingsStorage = (() => {
         }
         return entryA.timestamp - entryB.timestamp;
       })
-      .slice(0, 10);
+      .slice(0, 11);
   }
 
   function ensureUnlocks(rawUnlocks) {

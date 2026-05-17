@@ -2341,7 +2341,8 @@ window.TurboWingsApplication = (() => {
         playerName,
         difficultyId: result.difficultyId,
         timestamp: Date.now(),
-        themeId: this.state.currentRun?.themeId || getActiveThemeId()
+        themeId: this.state.currentRun?.themeId || getActiveThemeId(),
+        isDaily: !!this.state.currentRun?.isDaily
       };
 
       const unlockedDifficultyId = this.processUnlocks(run);
@@ -2352,7 +2353,7 @@ window.TurboWingsApplication = (() => {
           }
           return entryA.timestamp - entryB.timestamp;
         })
-        .slice(0, 10);
+        .slice(0, 11);
       this.saveLeaderboard();
 
       const progressionResult = applyRunToStats(statsBefore, run);
@@ -2428,22 +2429,8 @@ window.TurboWingsApplication = (() => {
       if (run.isDaily) {
         Daily.recordDailyPlay(run.score, run.coinsCollected || 0);
         this.updateDailyButton();
-        if (Online.isOnlineModeEnabled() && this.state.onlinePlayer) {
-          Online.submitDailyScore(
-            this.state.onlinePlayer.id,
-            run.playerName,
-            run,
-            this.state.countryInfo
-          ).then(() => {}).catch(() => {});
-        }
-      } else if (Online.isOnlineModeEnabled() && this.state.onlinePlayer && run.score > 0) {
-        Online.submitScore(
-          this.state.onlinePlayer.id,
-          run.playerName,
-          run,
-          this.state.countryInfo
-        ).then(() => {}).catch(() => {});
       }
+      void this.submitRunOnline(run);
     }
 
     processUnlocks(run) {
@@ -2629,6 +2616,32 @@ window.TurboWingsApplication = (() => {
       }
     }
 
+    async submitRunOnline(run) {
+      if (!Online.isOnlineModeEnabled() || !run || (!run.isDaily && (run.score || 0) <= 0)) {
+        return;
+      }
+
+      const country = this.state.countryInfo || (await Online.detectCountry());
+      this.state.countryInfo = country;
+      const result = this.state.onlinePlayer
+        ? { player: this.state.onlinePlayer }
+        : await Online.ensurePlayer(run.playerName, country);
+
+      if (!result?.player) {
+        this.updateOnlineStatus("offline");
+        return;
+      }
+
+      this.state.onlinePlayer = result.player;
+      this.updateOnlineStatus("online");
+      if (run.isDaily) {
+        await Online.submitDailyScore(result.player.id, run.playerName, run, country);
+        return;
+      }
+
+      await Online.submitScore(result.player.id, run.playerName, run, country);
+    }
+
     updateOnlineStatus(state) {
       const chip = this.elements.onlineStatusChip;
       const label = this.elements.onlineStatusLabel;
@@ -2772,57 +2785,69 @@ window.TurboWingsApplication = (() => {
     }
 
     renderGlobalLeaderboardRows(rows) {
-      const lbList = this.elements.leaderboardList;
-      if (!lbList) {
-        return;
-      }
-      if (!rows || rows.length === 0) {
-        lbList.innerHTML = `<p class="leaderboard-empty-message">${t("leaderboard.globalEmpty")}</p>`;
-        return;
-      }
-      lbList.innerHTML = "";
-      rows.forEach((row, i) => {
-        const el = document.createElement("div");
-        el.className = `leaderboard-row${i < 3 ? ` leaderboard-row-top leaderboard-row-rank-${i + 1}` : ""}`;
-        const date = row.played_at
-          ? new Date(row.played_at).toLocaleDateString()
-          : "—";
-        el.innerHTML = `
-          <span>${i + 1}</span>
-          <strong>${row.player_name || "—"}</strong>
-          <span>${row.score}</span>
-          <span><span class="leaderboard-difficulty-chip">${row.difficulty_id || "—"}</span></span>
-          <span>${row.country_code || "—"}</span>
-        `;
-        lbList.appendChild(el);
-      });
+      this.renderRemoteLeaderboardRows(rows, "leaderboard.globalEmpty", "global");
     }
 
     renderDailyLeaderboardRows(rows) {
+      this.renderRemoteLeaderboardRows(rows, "leaderboard.dailyEmpty", "daily");
+    }
+
+    normalizeRemoteLeaderboardRows(rows, mode = "global") {
+      return (rows || []).slice(0, 11).map((row) => ({
+        playerName: row.player_name || "—",
+        score: Number.isFinite(Number(row.score)) ? Math.max(0, Math.round(Number(row.score))) : 0,
+        difficultyId: row.difficulty_id || "normal",
+        timestamp: row.played_at ? new Date(row.played_at).getTime() : Date.now(),
+        meta:
+          mode === "global"
+            ? row.country_code || "—"
+            : row.played_at
+              ? new Date(row.played_at).toLocaleDateString()
+              : "—"
+      }));
+    }
+
+    renderRemoteLeaderboardRows(rows, emptyKey, mode = "global") {
       const lbList = this.elements.leaderboardList;
       if (!lbList) {
         return;
       }
-      if (!rows || rows.length === 0) {
-        lbList.innerHTML = `<p class="leaderboard-empty-message">${t("leaderboard.dailyEmpty")}</p>`;
+      const entries = this.normalizeRemoteLeaderboardRows(rows, mode);
+      if (!entries.length) {
+        lbList.innerHTML = `<p class="leaderboard-empty-message">${t(emptyKey)}</p>`;
         return;
       }
-      lbList.innerHTML = "";
-      rows.forEach((row, i) => {
-        const el = document.createElement("div");
-        el.className = `leaderboard-row${i < 3 ? ` leaderboard-row-top leaderboard-row-rank-${i + 1}` : ""}`;
-        const date = row.played_at
-          ? new Date(row.played_at).toLocaleDateString()
-          : "—";
-        el.innerHTML = `
-          <span>${i + 1}</span>
-          <strong>${row.player_name || "—"}</strong>
-          <span>${row.score}</span>
-          <span>${row.country_code || "—"}</span>
-          <span>${date}</span>
-        `;
-        lbList.appendChild(el);
-      });
+
+      const tableEntries = entries.slice(3, 11);
+      const groupedEntries = [tableEntries.slice(0, 4), tableEntries.slice(4, 8)].filter(
+        (group) => group.length
+      );
+
+      lbList.innerHTML = groupedEntries
+        .map(
+          (group) => `
+            <div class="leaderboard-list-column">
+              ${group
+                .map((entry) => {
+                  const difficulty = getDifficultyById(entry.difficultyId);
+                  const rank = tableEntries.indexOf(entry) + 4;
+                  return `
+                    <article class="leaderboard-row leaderboard-row-compact">
+                      <span class="leaderboard-rank">#${rank}</span>
+                      <strong>${this.escapeHtml(entry.playerName)}</strong>
+                      <span>${entry.score}</span>
+                      <span class="leaderboard-difficulty-chip leaderboard-difficulty-${difficulty.id}">${t(
+                        difficulty.labelKey
+                      )}</span>
+                      <span>${this.escapeHtml(entry.meta)}</span>
+                    </article>
+                  `;
+                })
+                .join("")}
+            </div>
+          `
+        )
+        .join("");
     }
 
     renderLeaderboardSummaryFromRows(rows) {
@@ -2846,23 +2871,31 @@ window.TurboWingsApplication = (() => {
       if (!podium) {
         return;
       }
-      podium.innerHTML = "";
-      const top3 = (rows || []).slice(0, 3);
+      const top3 = this.normalizeRemoteLeaderboardRows(rows).slice(0, 3);
       if (top3.length === 0) {
+        podium.innerHTML = "";
         return;
       }
-      const order = [1, 0, 2].filter((i) => top3[i]);
-      order.forEach((i) => {
-        const row = top3[i];
-        const el = document.createElement("div");
-        el.className = `leaderboard-podium-slot leaderboard-podium-rank-${i + 1}`;
-        el.innerHTML = `
-          <div class="podium-rank">${i + 1}</div>
-          <div class="podium-name">${row.player_name || "—"}</div>
-          <div class="podium-score">${row.score}</div>
-        `;
-        podium.appendChild(el);
-      });
+      const order = [1, 0, 2];
+      podium.innerHTML = order
+        .map((orderIndex) => {
+          const entry = top3[orderIndex];
+          if (!entry) {
+            return "";
+          }
+
+          const difficulty = getDifficultyById(entry.difficultyId);
+          return `
+            <article class="leaderboard-podium-card leaderboard-podium-card-rank-${orderIndex + 1}">
+              <span class="leaderboard-podium-rank">#${orderIndex + 1}</span>
+              <div class="leaderboard-podium-emblem" aria-hidden="true"></div>
+              <strong>${this.escapeHtml(entry.playerName)}</strong>
+              <span class="leaderboard-podium-score">${entry.score}</span>
+              <span class="leaderboard-podium-difficulty">${t(difficulty.labelKey)}</span>
+            </article>
+          `;
+        })
+        .join("");
     }
 
     // ===== SCORE CARD =====

@@ -2,8 +2,8 @@ window.TurboWingsOnline = (() => {
   const SUPABASE_URL = "https://pjkpswpmvxtdsoahprcm.supabase.co";
   const SUPABASE_KEY = "sb_publishable_Kcc409KmwqFbstFoL5AV-Q_tyfTYPlr";
   const COUNTRY_API = "https://ipapi.co/json/";
-  const GLOBAL_LEADERBOARD_LIMIT = 20;
-  const DAILY_LEADERBOARD_LIMIT = 20;
+  const GLOBAL_LEADERBOARD_LIMIT = 11;
+  const DAILY_LEADERBOARD_LIMIT = 11;
 
   const ONLINE_MODE_KEY = "turbo-wings-online-mode";
   const COUNTRY_CACHE_KEY = "turbo-wings-country-cache";

@@ -690,6 +690,7 @@ select {
   min-height: 2.4rem;
   padding: 0.4rem 0.35rem;
   text-align: center;
+  text-transform: none;
   white-space: normal;
   line-height: 1.2;
 }
@@ -4850,6 +4851,14 @@ body:not([data-display-mode="mobile"]) .game-over-actions .button::before {
   flex: 0 0 2.9rem;
 }
 
+body:not([data-display-mode="mobile"]) #restartButton::before,
+body:not([data-display-mode="mobile"]) #shareScoreCardButton::before,
+body:not([data-display-mode="mobile"]) #changeSetupButton::before {
+  width: 2.9rem;
+  height: 2.9rem;
+  flex: 0 0 2.9rem;
+}
+
 body:not([data-display-mode="mobile"]) .achievements-shell {
   gap: 0.7rem;
 }
@@ -6847,6 +6856,7 @@ body:not([data-display-mode="mobile"]) .home-secondary-actions .button {
   padding: 0.36rem 0.32rem;
   font-size: 0.64rem;
   line-height: 1.12;
+  text-transform: none;
   overflow-wrap: anywhere;
 }
 
