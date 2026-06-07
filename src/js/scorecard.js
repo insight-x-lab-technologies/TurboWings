@@ -10,6 +10,7 @@ window.TurboWingsScoreCard = (() => {
 
   function drawCard(ctx, data) {
     const { playerName, score, difficultyLabel, flightLevel, timestamp, isDaily } = data;
+    const labels = data.labels || {};
     const W = CARD_WIDTH;
     const H = CARD_HEIGHT;
 
@@ -56,7 +57,7 @@ window.TurboWingsScoreCard = (() => {
       ctx.fill();
       ctx.fillStyle = "#0d1837";
       ctx.textAlign = "center";
-      ctx.fillText("DAILY CHALLENGE", bx + badgeW / 2, by + 15);
+      ctx.fillText(labels.dailyChallenge || "DAILY CHALLENGE", bx + badgeW / 2, by + 15);
     }
 
     // Score section
@@ -70,7 +71,7 @@ window.TurboWingsScoreCard = (() => {
 
     ctx.font = "15px 'Trebuchet MS', sans-serif";
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    ctx.fillText("SCORE", W / 2, 225);
+    ctx.fillText(labels.score || "SCORE", W / 2, 225);
 
     // Divider
     ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
@@ -82,9 +83,9 @@ window.TurboWingsScoreCard = (() => {
 
     // Stats row
     const stats = [
-      { label: "PILOT", value: playerName || "Player 1" },
-      { label: "DIFFICULTY", value: difficultyLabel || "Normal" },
-      { label: "FL REACHED", value: `FL ${flightLevel || 1}` }
+      { label: labels.pilot || "PILOT", value: playerName || "Player 1" },
+      { label: labels.difficulty || "DIFFICULTY", value: difficultyLabel || "Normal" },
+      { label: labels.flightLevel || "FL REACHED", value: `FL ${flightLevel || 1}` }
     ];
 
     const colW = (W - 56) / stats.length;

@@ -2918,7 +2918,14 @@ window.TurboWingsApplication = (() => {
           difficultyLabel: diffLabel,
           flightLevel: result.flightLevelReached,
           timestamp: result.timestamp,
-          isDaily: !!result.isDaily
+          isDaily: !!result.isDaily,
+          labels: {
+            dailyChallenge: t("scorecard.dailyChallengeLabel"),
+            score: t("scorecard.scoreLabel"),
+            pilot: t("scorecard.pilotLabel"),
+            difficulty: t("scorecard.difficultyLabel"),
+            flightLevel: t("scorecard.flightLevelLabel")
+          }
         },
         shareText
       );
