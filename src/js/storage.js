@@ -7,7 +7,9 @@ window.TurboWingsStorage = (() => {
     leaderboard: "turbo-wings-leaderboard",
     unlocks: "turbo-wings-unlocks",
     totalCoins: "turbo-wings-total-coins",
-    profiles: "turbo-wings-player-profiles-v1"
+    profiles: "turbo-wings-player-profiles-v1",
+    ownedAircraft: "turbo-wings-owned-aircraft",
+    selectedAircraft: "turbo-wings-selected-aircraft"
   };
 
   function loadJson(key, fallback) {
@@ -58,7 +60,7 @@ window.TurboWingsStorage = (() => {
         }
         return entryA.timestamp - entryB.timestamp;
       })
-      .slice(0, 10);
+      .slice(0, 11);
   }
 
   function ensureUnlocks(rawUnlocks) {
@@ -191,6 +193,26 @@ window.TurboWingsStorage = (() => {
     window.localStorage.setItem(KEYS.totalCoins, String(Math.max(0, Math.round(totalCoins || 0))));
   }
 
+  function loadOwnedAircraft() {
+    const raw = loadJson(KEYS.ownedAircraft, null);
+    if (!Array.isArray(raw) || raw.length === 0) {
+      return ["classic"];
+    }
+    return raw.filter((id) => typeof id === "string");
+  }
+
+  function saveOwnedAircraft(owned) {
+    saveJson(KEYS.ownedAircraft, Array.isArray(owned) ? owned : ["classic"]);
+  }
+
+  function loadSelectedAircraft() {
+    return window.localStorage.getItem(KEYS.selectedAircraft) || "classic";
+  }
+
+  function saveSelectedAircraft(aircraftId) {
+    window.localStorage.setItem(KEYS.selectedAircraft, String(aircraftId));
+  }
+
   return {
     KEYS,
     getPlayerProfile,
@@ -198,6 +220,8 @@ window.TurboWingsStorage = (() => {
     loadLanguage,
     loadLastSetup,
     loadLeaderboard,
+    loadOwnedAircraft,
+    loadSelectedAircraft,
     loadSettings,
     loadTheme,
     loadTotalCoins,
@@ -208,8 +232,10 @@ window.TurboWingsStorage = (() => {
     saveLanguage,
     saveLastSetup,
     saveLeaderboard,
+    saveOwnedAircraft,
     savePlayerProfile,
     saveProfilesMap,
+    saveSelectedAircraft,
     saveSettings,
     saveTheme,
     saveTotalCoins,

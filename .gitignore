@@ -8,3 +8,5 @@ build/
 .DS_Store
 tmp_*
 .codex
+scripts/webapplab-http-server.log
+scripts/.webapplab-http-server.pid

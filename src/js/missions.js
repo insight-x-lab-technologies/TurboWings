@@ -241,19 +241,14 @@ window.TurboWingsMissions = (() => {
       ...missions[missionIndex],
       status: "claimed"
     };
-    const excludedIds = missions
-      .filter((_, index) => index !== missionIndex)
-      .map((mission) => mission.id);
-    const replacementMission = pickReplacementMission(excludedIds);
     const nextMissions = missions.map((mission, index) =>
-      index === missionIndex ? replacementMission : mission
+      index === missionIndex ? claimedMission : mission
     );
 
     return {
       missions: nextMissions,
       reward: claimedMission.reward,
-      claimedMission,
-      replacementMission
+      claimedMission
     };
   }
 
